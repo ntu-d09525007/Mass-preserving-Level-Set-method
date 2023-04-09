@@ -65,7 +65,7 @@ CHARACTER(100) :: NAME_OF_FILE
             p%loc%phi%now(i,j,k) = -z + 0.1876 
         else if( sqrt( x**2 + y**2 + (z-0.8)**2 ) <= 0.5 )then
             p%loc%phi%now(i,j,k) = -sqrt( x**2 + y**2 + (z-0.8)**2) + 0.5
-            p%loc%vel%z%now(i,j,k) = -1.0
+            p%loc%vel%z%now(i,j,k) = -1.0 * p%loc%vof%now(i,j,k)
         else 
             p%loc%phi%now(i,j,k)= MAX(-z+0.1876,-sqrt( x**2 + y**2 + (z-0.8)**2) + 0.5)
         end if

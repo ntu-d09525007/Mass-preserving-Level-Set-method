@@ -61,7 +61,7 @@ do
     call ns_ab_predictor
     call ppe_sor_solver(p%glb%p_tol)
 
-    if(iter>3)exit
+    if(iter>0)exit
         
 end do
 

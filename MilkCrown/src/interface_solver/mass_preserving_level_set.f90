@@ -7,7 +7,7 @@ real(8) :: lam, plam
 
 id=0
 
-do iter = 1, 20
+do iter = 1, 5
     
     call ls_mv()
     call surface_norms2()

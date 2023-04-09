@@ -11,8 +11,6 @@ integer(8) :: cpustart, cpuend
     !call ns_split_solver
     
     call ns_check_convergence_div
-    call velbc(p%loc%vel%x%now,p%loc%vel%y%now,p%loc%vel%z%now)
-    ! call ibm_bc
     call node_vel
     
     call calculate_energy()
