@@ -88,7 +88,11 @@ real(8):: e0, e
     e0 = p%glb%Es0 + p%glb%Ek0 + p%glb%Ep0
     e = p%glb%Es + p%glb%Ek + p%glb%Ep + p%glb%Ev
 
-    write(*,'("Energy loss: ", Es15.4, " (J)")')e-e0
+    write(*,'(A25, 2Es15.4)')"Total Energy loss:",e0-e
+    write(*,'(A25, 2ES15.4)')"Surface Energy:", p%glb%es-p%glb%es0, p%glb%es0
+    write(*,'(A25, 2ES15.4)')"Kinectic Energy:", p%glb%ek-p%glb%ek0
+    write(*,'(A25, 2ES15.4)')"Potential Energy:", p%glb%ep-p%glb%ep0
+    write(*,'(A25, 2ES15.4)')"Dissipation:", p%glb%ev
 
 end subroutine
 
@@ -108,8 +112,9 @@ dv = p%glb%dx * p%glb%dy * p%glb%dz
 A = 0.0
 Ke = 0.0
 Po = 0.0
+Q = 0.0
 
-!$omp parallel do reduction(+:A, Ke, Po), private(lq, lke, ux, uy, uz, vx, vy, vz, wx, wy, wz)
+!$omp parallel do reduction(+:A, Ke, Po, Q), private(lq, lke, ux, uy, uz, vx, vy, vz, wx, wy, wz)
 do k = p%loc%ks, p%loc%ke
 do j = p%loc%js, p%loc%je
 do i = p%loc%is, p%loc%ie

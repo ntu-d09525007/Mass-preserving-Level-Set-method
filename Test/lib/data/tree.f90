@@ -33,8 +33,8 @@ integer :: id, level
     write(*,'(A20,F15.8)')"dz:",p%glb%dz
     write(*,'(A20,F15.8)')"dt:",p%glb%dt
     write(*,'(A20,F15.4)')"Re:",p%glb%re
-    write(*,'(A20,F15.4)')"We:",p%glb%we
-    write(*,'(A20,F15.4)')"Fr:",p%glb%fr
+    write(*,'(A20,F15.4,F5.3)')"We:",p%glb%we, p%glb%btn_sf
+    write(*,'(A20,F15.4,F5.3)')"Fr:",p%glb%fr, p%glb%btn_g
     write(*,'(A20,F10.4)')"Density ratio:",p%glb%rho_12
     write(*,'(A20,F10.4)')"Viscosity ratio:",p%glb%mu_12
     write(*,'(A20,I5,A3,I5,A3,I5)')"Grids:",p%glb%node_x,"x",p%glb%node_y,"x",p%glb%node_z
