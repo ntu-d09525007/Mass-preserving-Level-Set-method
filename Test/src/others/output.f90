@@ -124,10 +124,10 @@ do i = p%loc%is, p%loc%ie
 
     ! Kinetic energy
     lke = p%loc%nvel%x%now(i,j,k)**2 + p%loc%nvel%y%now(i,j,k)**2 + p%loc%nvel%z%now(i,j,k)**2
-    Ke = Ke + lke * p%loc%rho%now(i,j,k) * 0.5 * dv
+    Ke = Ke + lke * p%loc%rho%now(i,j,k) * 0.5 * dv * p%loc%heavy%now(i,j,k)
 
     ! Potential energy
-    Po = Po + p%glb%z(i,j,k) * p%loc%rho%now(i,j,k) * dv
+    Po = Po + p%glb%z(i,j,k) * p%loc%rho%now(i,j,k) * dv * p%loc%heavy%now(i,j,k)
 
     ! Viscous dissipation
     ux = 0.5*( p%loc%nvel%x%now(i+1,j,k) - p%loc%nvel%x%now(i-1,j,k) ) / p%glb%dx
@@ -144,7 +144,7 @@ do i = p%loc%is, p%loc%ie
 
     lq = (uy+vx)**2 + (uz+wx)**2 + (wy+vz)**2 
     lq = lq * 0.5 + ux**2 + vy**2 + wz**2
-    Q = Q + lq * 2.0 * p%loc%mu%now(i,j,k) * dv
+    Q = Q + lq * 2.0 * p%loc%mu%now(i,j,k) * dv * p%loc%heavy%now(i,j,k)
 
 enddo
 enddo

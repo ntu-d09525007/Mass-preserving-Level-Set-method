@@ -219,7 +219,7 @@ real(8) :: mag
         p%glb%fr = p%glb%u**2.0d0 / ( p%glb%g * p%glb%L )
     endif
 
-    p%glb%energy_unit = p%glb%rho_1 * p%glb%g * p%glb%L**3.0
+    p%glb%energy_unit = p%glb%rho_1 * p%glb%g * p%glb%L**4.0
 
     write(*,*)"finish calculating problem parameters"
 
