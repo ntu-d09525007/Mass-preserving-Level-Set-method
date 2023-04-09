@@ -1,6 +1,0 @@
-Es: k * L^2				Fr / We * Ep	      
-Ek: rho * U^2 * L^3 	Fr		* Ep
-Ep: rho * g * L^4		1		* Ep
-Ev: 					Fr / Re * Ep
-
-

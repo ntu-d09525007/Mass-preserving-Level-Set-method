@@ -48,20 +48,8 @@ CHARACTER(100) :: NAME_OF_FILE
             x = 0.5d0*( p%glb%x(i,j,k)+p%glb%x(i-1,j,k) ) + real(ii,8)*p%glb%dx/real(ug,8)
             y = 0.5d0*( p%glb%y(i,j,k)+p%glb%y(i,j-1,k) ) + real(jj,8)*p%glb%dy/real(ug,8)
             z = 0.5d0*( p%glb%z(i,j,k)+p%glb%z(i,j,k-1) ) + real(kk,8)*p%glb%dz/real(ug,8)
-            
-            ! dambreak -- partial failure
-            !=========================================
-            ! if( x>1.0d0 .and. x<1.0d0+2.0d0*p%glb%dx .and. abs(y-1.0d0)>0.2d0 )then
-            !     p%loc%ibm%solid%now(i,j,k) = p%loc%ibm%solid%now(i,j,k) + 1.0d0/real(ug,8)**3.0d0
-            ! end if
-            
-            ! dambreak -- rising gate
-            !========================================
-            ! if( x>5.0d0/3.0d0 .and. x<5.0d0/3.0d0+2.0d0*p%glb%dx .and. z>0.0 )then
-            !     p%loc%ibm%solid%now(i,j,k) = p%loc%ibm%solid%now(i,j,k) + 1.0d0/real(ug,8)**3.0d0
-            ! endif
 
-            if( x<=1.0 .and. z<=1.0d0 )then
+            if(  z<= 0.1876 .or. sqrt(x**2+y**2+(z-0.8)**2)<=0.5 )then
                 p%loc%vof%now(i,j,k) = p%loc%vof%now(i,j,k) +  1.0d0/real(ug,8)**3.0d0
             end if
 
@@ -73,35 +61,14 @@ CHARACTER(100) :: NAME_OF_FILE
         y = p%glb%y(i,j,k)
         z = p%glb%z(i,j,k)
         
-        ! vortex
-        !=========================================
-        ! p%loc%phi%now(i,j,k) = - dsqrt( (x-0.5d0)**2.0d0 + (y-0.5d0)**2.0d0 + (z-0.5d0)**2.0d0 ) + 0.25d0
-        
-        ! dambreak -- drybed
-        !=========================================
-        if( x<=1.0 .and. z<=1.0d0 )then
-           p%loc%phi%now(i,j,k) = 1.0_8
-        else
-           p%loc%phi%now(i,j,k) = -1.0_8
+        if( z <= 0.1876 )then  
+            p%loc%phi%now(i,j,k) = -zs+0.1876 
+        else if( sqrt( x**2 + y**2 + (z-0.8)**2 ) <= 0.5 )then
+            p%loc%phi%now(i,j,k) = -sqrt( x**2 + y**2 + (z-0.8)**2) + 0.5
+            p%loc%vel%z%now(i,j,k) = -1.0
+        else 
+            p%loc%phi%now(i,j,k)= MAX(-z+0.1876,-sqrt( x**2 + y**2 + (z-0.8)**2) + 0.5)
         end if
-
-        ! dambreak -- wetbed
-        !=========================================
-        ! if( x<=2.53d0 .and. z<=1.0 )then
-        !     p%loc%phi%now(i,j,k) = 1.0_8
-        ! else if ( x>2.53d0 .and. z<=0.12d0 )then
-        !     p%loc%phi%now(i,j,k) = 1.0_8
-        ! else 
-        !     p%loc%phi%now(i,j,k) = -1.0_8
-        ! end if
-
-        ! dambreak -- partial failure
-        !=========================================
-        ! if( x<1.0d0 .and. z<0.6d0 )then
-        !     p%loc%phi%now(i,j,k) = 1.0_8
-        ! else 
-        !     p%loc%phi%now(i,j,k) = -1.0_8
-        ! endif
         
     end do
     end do
@@ -110,7 +77,6 @@ CHARACTER(100) :: NAME_OF_FILE
 
     call bc(p%loc%phi%now)
     call bc(p%loc%vof%now)
-    ! call bc(p%loc%ibm%solid%now)
     call velbc(p%loc%vel%x%now,p%loc%vel%y%now,p%loc%vel%z%now)
     
     write(*,*)"Init data finish"

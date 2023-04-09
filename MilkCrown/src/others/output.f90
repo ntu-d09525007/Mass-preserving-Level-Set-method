@@ -2,39 +2,15 @@ subroutine output()
 use all
 implicit none
 integer :: i,j,k
-real(8) :: damfront, damh
-real(8) :: h1, h2, h3, h4
+real(8) :: e0, e
 
 ! level set method, loss of volume/mass in percentage
 write(p%fil%ls_mv,*)p%glb%time,100.0d0*(p%glb%imass-p%glb%mass)/p%glb%imass,100.0d0*(p%glb%imassv-p%glb%massv)/p%glb%imassv
 
-!Drybed 
-damfront = 0.0d0; damh=0.0d0
-k=1
-!$omp parallel do collapse(2), reduction(max:damfront)
-do j = p%loc%js, p%loc%je
-do i = p%loc%is, p%loc%ie
-    if( p%loc%phi%now(i,j,k)*p%loc%phi%now(i+1,j,k) < 0.0d0 .and. p%loc%phi%now(i-1,j,k) > 0.0d0 .and. p%loc%phi%now(i-2,j,k) > 0.0d0 )then
-        damfront = max( damfront, p%glb%x(i,j,k) + &
-             p%glb%dx*abs(p%loc%phi%now(i,j,k))/( abs(p%loc%phi%now(i,j,k))+abs(p%loc%phi%now(i+1,j,k))) )
-    endif
-enddo
-enddo   
-!$omp end parallel do
+e0 = p%glb%Es0 + p%glb%Ek0 + p%glb%Ep0
+e = p%glb%Es + p%glb%Ek + p%glb%Ep + p%glb%Ev
 
-i=1
-!$omp parallel do collapse(2), reduction(max:damh)
-do k = p%loc%ks, p%loc%ke
-do j = p%loc%js, p%loc%je
-    if( p%loc%phi%now(i,j,k)*p%loc%phi%now(i,j,k+1) < 0.0d0 .and. p%loc%phi%now(i,j,k-1)>0.0d0 .and. p%loc%phi%now(i,j,k-2)>0.0d0 )then
-        damh = max( damh, p%glb%z(i,j,k) + &
-            p%glb%dz*abs(p%loc%phi%now(i,j,k))/( abs(p%loc%phi%now(i,j,k))+abs(p%loc%phi%now(i,j,k+1))) )
-    endif
-enddo
-enddo
-!$omp end parallel do
-
-write(p%fil%damdata, *)p%glb%time*p%glb%T, damfront*p%glb%L, damh*p%glb%L
+write(p%fil%energy, *)p%glb%time, (e0-e)/e0*100, p%glb%es, p%glb%ek, p%glb%ep, p%glb%ev
 
 end subroutine
 
@@ -88,11 +64,11 @@ real(8):: e0, e
     e0 = p%glb%Es0 + p%glb%Ek0 + p%glb%Ep0
     e = p%glb%Es + p%glb%Ek + p%glb%Ep + p%glb%Ev
 
-    write(*,'(A25, Es15.4, "%")')"Total Energy loss:",(e0-e)/e0*100
-    write(*,'(A25, ES15.4)')"Surface Energy:", p%glb%es-p%glb%es0
-    write(*,'(A25, ES15.4)')"Kinectic Energy:", p%glb%ek-p%glb%ek0
-    write(*,'(A25, ES15.4)')"Potential Energy:", p%glb%ep-p%glb%ep0
-    write(*,'(A25, ES15.4)')"Dissipation:", p%glb%ev
+    write(*,'(A20, Es15.4, "%")')"Total Energy loss:",(e0-e)/e0*100
+    write(*,'(A20, ES15.4)')"Surface Energy:", p%glb%es-p%glb%es0
+    write(*,'(A20, ES15.4)')"Kinectic Energy:", p%glb%ek-p%glb%ek0
+    write(*,'(A20, ES15.4)')"Potential Energy:", p%glb%ep-p%glb%ep0
+    write(*,'(A20, ES15.4)')"Dissipation:", p%glb%ev
 
 end subroutine
 
@@ -123,21 +99,24 @@ do i = p%loc%is, p%loc%ie
     ! Surface area
     if( abs(p%loc%phi%now(i,j,k)) < p%glb%dx ) A = A + dv
 
-    ! Kinetic energy
-    lke = p%loc%nvel%x%now(i,j,k)**2 + p%loc%nvel%y%now(i,j,k)**2 + p%loc%nvel%z%now(i,j,k)**2
-    Ke = Ke + lke * p%loc%rho%now(i,j,k) * 0.5 * dv * p%loc%heavy%now(i,j,k)
+    if( p%loc%phi%now(i,j,k) > 0.0)then
 
-    ! Potential energy
-    Po = Po + p%glb%z(i,j,k) * p%loc%rho%now(i,j,k) * dv * p%loc%heavy%now(i,j,k)
+        ! Kinetic energy
+        lke = p%loc%nvel%x%now(i,j,k)**2 + p%loc%nvel%y%now(i,j,k)**2 + p%loc%nvel%z%now(i,j,k)**2
+        Ke = Ke + lke * p%loc%rho%now(i,j,k) * 0.5 * dv * p%loc%heavy%now(i,j,k)
 
-    ! Viscous dissipation
-    ux=p%loc%vel_ten%xx(i,j,k);uy=p%loc%vel_ten%xy(i,j,k);uz=p%loc%vel_ten%xz(i,j,k)
-    vx=p%loc%vel_ten%yx(i,j,k);vy=p%loc%vel_ten%yy(i,j,k);vz=p%loc%vel_ten%yz(i,j,k)
-    wx=p%loc%vel_ten%zx(i,j,k);wy=p%loc%vel_ten%zy(i,j,k);wz=p%loc%vel_ten%zz(i,j,k)
+        ! Potential energy
+        Po = Po + p%glb%z(i,j,k) * p%loc%rho%now(i,j,k) * dv * p%loc%heavy%now(i,j,k)
 
-    lq = (uy+vx)**2 + (uz+wx)**2 + (wy+vz)**2 
-    lq = lq * 0.5 + ux**2 + vy**2 + wz**2
-    Q = Q + lq * 2.0 * p%loc%mu%now(i,j,k) * dv * p%loc%heavy%now(i,j,k)
+        ! Viscous dissipation
+        ux=p%loc%vel_ten%xx(i,j,k);uy=p%loc%vel_ten%xy(i,j,k);uz=p%loc%vel_ten%xz(i,j,k)
+        vx=p%loc%vel_ten%yx(i,j,k);vy=p%loc%vel_ten%yy(i,j,k);vz=p%loc%vel_ten%yz(i,j,k)
+        wx=p%loc%vel_ten%zx(i,j,k);wy=p%loc%vel_ten%zy(i,j,k);wz=p%loc%vel_ten%zz(i,j,k)
+
+        lq = 0.5 + (uy+vx)**2 + (uz+wx)**2 + (wy+vz)**2 + ux**2 + vy**2 + wz**2
+        Q = Q + lq * 2.0 * p%loc%mu%now(i,j,k) * dv * p%loc%heavy%now(i,j,k)
+        
+    endif
 
 enddo
 enddo
