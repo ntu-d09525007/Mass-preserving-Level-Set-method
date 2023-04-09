@@ -15,7 +15,7 @@ integer(8) :: cpustart, cpuend
     ! call ibm_bc
     call node_vel
     
-    call calculate_energy(.false.)
+    call calculate_energy()
     
     call system_clock(cpuend)
     p%glb%ns = p%glb%ns + real(cpuend-cpustart,kind=8)/real(p%glb%cpurate,kind=8)
