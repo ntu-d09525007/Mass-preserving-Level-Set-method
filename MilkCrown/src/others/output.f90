@@ -98,14 +98,14 @@ do i = p%loc%is, p%loc%ie
     ! Surface area
     if( abs(p%loc%phi%now(i,j,k)) < p%glb%dx ) A = A + dv
 
-    if( p%loc%phi%now(i,j,k) > 0.0)then
+    if( abs(p%loc%phi%now(i,j,k)) > 0.0)then
 
         ! Kinetic energy
         lke = p%loc%nvel%x%now(i,j,k)**2 + p%loc%nvel%y%now(i,j,k)**2 + p%loc%nvel%z%now(i,j,k)**2
-        Ke = Ke + lke * p%loc%rho%now(i,j,k) * 0.5 * dv * p%loc%heavy%now(i,j,k)
+        Ke = Ke + lke * p%loc%rho%now(i,j,k) * 0.5 * dv 
 
         ! Potential energy
-        Po = Po + p%glb%z(i,j,k) * p%loc%rho%now(i,j,k) * dv * p%loc%heavy%now(i,j,k)
+        Po = Po + p%glb%z(i,j,k) * p%loc%rho%now(i,j,k) * dv 
 
         ! Viscous dissipation
         ux=p%loc%vel_ten%xx(i,j,k);uy=p%loc%vel_ten%xy(i,j,k);uz=p%loc%vel_ten%xz(i,j,k)
@@ -113,7 +113,7 @@ do i = p%loc%is, p%loc%ie
         wx=p%loc%vel_ten%zx(i,j,k);wy=p%loc%vel_ten%zy(i,j,k);wz=p%loc%vel_ten%zz(i,j,k)
 
         lq = 0.5 + (uy+vx)**2 + (uz+wx)**2 + (wy+vz)**2 + ux**2 + vy**2 + wz**2
-        Q = Q + lq * 2.0 * p%loc%mu%now(i,j,k) * dv * p%loc%heavy%now(i,j,k)
+        Q = Q + lq * 2.0 * p%loc%mu%now(i,j,k) * dv 
         
     endif
 
