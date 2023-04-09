@@ -88,11 +88,11 @@ real(8):: e0, e
     e0 = p%glb%Es0 + p%glb%Ek0 + p%glb%Ep0
     e = p%glb%Es + p%glb%Ek + p%glb%Ep + p%glb%Ev
 
-    write(*,'(A25, 2Es15.4)')"Total Energy loss:",e0-e
-    write(*,'(A25, 2ES15.4)')"Surface Energy:", p%glb%es-p%glb%es0, p%glb%es0
-    write(*,'(A25, 2ES15.4)')"Kinectic Energy:", p%glb%ek-p%glb%ek0
-    write(*,'(A25, 2ES15.4)')"Potential Energy:", p%glb%ep-p%glb%ep0
-    write(*,'(A25, 2ES15.4)')"Dissipation:", p%glb%ev
+    write(*,'(A25, Es15.4, "%")')"Total Energy loss:",(e0-e)/e0*100
+    write(*,'(A25, ES15.4)')"Surface Energy:", p%glb%es-p%glb%es0
+    write(*,'(A25, ES15.4)')"Kinectic Energy:", p%glb%ek-p%glb%ek0
+    write(*,'(A25, ES15.4)')"Potential Energy:", p%glb%ep-p%glb%ep0
+    write(*,'(A25, ES15.4)')"Dissipation:", p%glb%ev
 
 end subroutine
 
@@ -106,6 +106,7 @@ real(8) :: ux, uy, uz, vx, vy, vz, wx, wy, wz
 logical :: init
 
 call rho_mu
+call find_tensor(p%loc%vel_ten, p%loc%nvel%x%now, p%loc%nvel%y%now, p%loc%nvel%z%now)
 
 dv = p%glb%dx * p%glb%dy * p%glb%dz
 
@@ -130,17 +131,9 @@ do i = p%loc%is, p%loc%ie
     Po = Po + p%glb%z(i,j,k) * p%loc%rho%now(i,j,k) * dv * p%loc%heavy%now(i,j,k)
 
     ! Viscous dissipation
-    ux = 0.5*( p%loc%nvel%x%now(i+1,j,k) - p%loc%nvel%x%now(i-1,j,k) ) / p%glb%dx
-    uy = 0.5*( p%loc%nvel%x%now(i,j+1,k) - p%loc%nvel%x%now(i,j-1,k) ) / p%glb%dy
-    uz = 0.5*( p%loc%nvel%x%now(i,j,k+1) - p%loc%nvel%x%now(i,j,k-1) ) / p%glb%dz
-
-    vx = 0.5*( p%loc%nvel%y%now(i+1,j,k) - p%loc%nvel%y%now(i-1,j,k) ) / p%glb%dx
-    vy = 0.5*( p%loc%nvel%y%now(i,j+1,k) - p%loc%nvel%y%now(i,j-1,k) ) / p%glb%dy
-    vz = 0.5*( p%loc%nvel%y%now(i,j,k+1) - p%loc%nvel%y%now(i,j,k-1) ) / p%glb%dz
-
-    wx = 0.5*( p%loc%nvel%z%now(i+1,j,k) - p%loc%nvel%z%now(i-1,j,k) ) / p%glb%dx
-    wy = 0.5*( p%loc%nvel%z%now(i,j+1,k) - p%loc%nvel%z%now(i,j-1,k) ) / p%glb%dy
-    wz = 0.5*( p%loc%nvel%z%now(i,j,k+1) - p%loc%nvel%z%now(i,j,k-1) ) / p%glb%dz
+    ux=p%loc%vel_ten%xx(i,j,k);uy=p%loc%vel_ten%xy(i,j,k);uz=p%loc%vel_ten%xz(i,j,k)
+    vx=p%loc%vel_ten%yx(i,j,k);vy=p%loc%vel_ten%yy(i,j,k);vz=p%loc%vel_ten%yz(i,j,k)
+    wx=p%loc%vel_ten%zx(i,j,k);wy=p%loc%vel_ten%zy(i,j,k);wz=p%loc%vel_ten%zz(i,j,k)
 
     lq = (uy+vx)**2 + (uz+wx)**2 + (wy+vz)**2 
     lq = lq * 0.5 + ux**2 + vy**2 + wz**2
