@@ -84,8 +84,6 @@ CHARACTER(100) :: NAME_OF_FILE
     !write(*,*)"start redistancing"
     !call level_set_rk3_redis(0)
 
-    call calculate_energy(.true.)
-
     write(*,*)"find cell center velocity"
     call node_vel
     call ns_init
@@ -111,5 +109,6 @@ CHARACTER(100) :: NAME_OF_FILE
     p%glb%ppe    = 0.0d0
     p%glb%ns     = 0.0d0
     p%glb%syn    = 0.0d0
+    p%glb%Ev     = -1.0d0
         
 end subroutine

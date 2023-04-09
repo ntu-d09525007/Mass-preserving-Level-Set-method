@@ -10,7 +10,7 @@ write(p%fil%ls_mv,*)p%glb%time,100.0d0*(p%glb%imass-p%glb%mass)/p%glb%imass,100.
 e0 = p%glb%Es0 + p%glb%Ek0 + p%glb%Ep0
 e = p%glb%Es + p%glb%Ek + p%glb%Ep + p%glb%Ev
 
-write(p%fil%energy, *)p%glb%time, e, e0, p%glb%es, p%glb%ek, p%glb%ep, p%glb%ev
+write(p%fil%energy, '(7ES15.4)')p%glb%time, e, e0, p%glb%es, p%glb%ek, p%glb%ep, p%glb%ev
 
 end subroutine
 
@@ -73,13 +73,12 @@ real(8):: e0, e
 end subroutine
 
 
-subroutine calculate_energy(init)
+subroutine calculate_energy()
 use all
 implicit none
 integer :: i,j,k
 real(8) :: A, Q, lQ, Ke, lKe, dv, Po
 real(8) :: ux, uy, uz, vx, vy, vz, wx, wy, wz
-logical :: init
 
 call rho_mu
 call find_tensor(p%loc%vel_ten, p%loc%nvel%x%now, p%loc%nvel%y%now, p%loc%nvel%z%now)
@@ -126,7 +125,7 @@ enddo
 A = A / p%glb%dx / 2
 
 
-if(init)then
+if(p%glb%Ev < 0.0)then
     
     p%glb%Es0 = A * p%glb%Fr / p%glb%We * p%glb%energy_unit * p%glb%btn_sf
     p%glb%Ek0 = Ke * p%glb%Fr * p%glb%energy_unit
