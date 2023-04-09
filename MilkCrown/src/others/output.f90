@@ -10,7 +10,7 @@ write(p%fil%ls_mv,*)p%glb%time,100.0d0*(p%glb%imass-p%glb%mass)/p%glb%imass,100.
 e0 = p%glb%Es0 + p%glb%Ek0 + p%glb%Ep0
 e = p%glb%Es + p%glb%Ek + p%glb%Ep + p%glb%Ev
 
-write(p%fil%energy, *)p%glb%time, (e0-e)/e0*100, p%glb%es, p%glb%ek, p%glb%ep, p%glb%ev
+write(p%fil%energy, *)p%glb%time, e, e0, p%glb%es, p%glb%ek, p%glb%ep, p%glb%ev
 
 end subroutine
 
@@ -64,7 +64,7 @@ real(8):: e0, e
     e0 = p%glb%Es0 + p%glb%Ek0 + p%glb%Ep0
     e = p%glb%Es + p%glb%Ek + p%glb%Ep + p%glb%Ev
 
-    write(*,'(A20, Es15.4, "%")')"Total Energy loss:",(e0-e)/e0*100
+    write(*,'(A20, Es15.4)')"Total Energy loss:",e0-e
     write(*,'(A20, ES15.4)')"Surface Energy:", p%glb%es-p%glb%es0
     write(*,'(A20, ES15.4)')"Kinectic Energy:", p%glb%ek-p%glb%ek0
     write(*,'(A20, ES15.4)')"Potential Energy:", p%glb%ep-p%glb%ep0

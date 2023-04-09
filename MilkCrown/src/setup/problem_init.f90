@@ -81,8 +81,8 @@ CHARACTER(100) :: NAME_OF_FILE
     
     write(*,*)"Init data finish"
 
-    write(*,*)"start redistancing"
-    call level_set_rk3_redis(0)
+    !write(*,*)"start redistancing"
+    !call level_set_rk3_redis(0)
 
     call calculate_energy(.true.)
 

@@ -126,7 +126,7 @@ real(8) :: mag
     
     p%fil%energy = 14
     open(unit=p%fil%energy,file="./out/"//trim(p%glb%name)//"_Energy.plt")
-    write(p%fil%energy,*)'variables = "T" "Loss(%)" Es" "Ek" "Ep" "Ev" '
+    write(p%fil%energy,*)'variables = "T" "E" "E0" Es" "Ek" "Ep" "Ev" '
 
     p%fil%ls_mv = 15
     open(unit=p%fil%ls_mv,file="./out/"//trim(p%glb%name)//"_MassLoss.plt")
