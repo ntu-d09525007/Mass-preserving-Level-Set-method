@@ -49,7 +49,7 @@ CHARACTER(100) :: NAME_OF_FILE
             y = 0.5d0*( p%glb%y(i,j,k)+p%glb%y(i,j-1,k) ) + real(jj,8)*p%glb%dy/real(ug,8)
             z = 0.5d0*( p%glb%z(i,j,k)+p%glb%z(i,j,k-1) ) + real(kk,8)*p%glb%dz/real(ug,8)
 
-            if(  z<= 0.1876 .or. sqrt(x**2+y**2+(z-p%glb%zend+0.5)**2)<=0.5 )then
+            if(  z<= 0.1876 .or. sqrt(x**2+y**2+(z-0.8)**2)<=0.5 )then
                 p%loc%vof%now(i,j,k) = p%loc%vof%now(i,j,k) +  1.0d0/real(ug,8)**3.0d0
             end if
 
@@ -63,10 +63,11 @@ CHARACTER(100) :: NAME_OF_FILE
         
         if( z <= 0.1876 )then  
             p%loc%phi%now(i,j,k) = -z + 0.1876 
-        else if( sqrt( x**2 + y**2 + (z-p%glb%zend+0.5)**2 ) <= 0.5 )then
-            p%loc%phi%now(i,j,k) = -sqrt( x**2 + y**2 + (z-p%glb%zend+0.5)**2) + 0.5
+        else if( sqrt( x**2 + y**2 + (z-0.8)**2 ) <= 0.5 )then
+            p%loc%phi%now(i,j,k) = -sqrt( x**2 + y**2 + (z-0.8)**2) + 0.5
+            p%loc%vel%z%now(i,j,k) = -1.0
         else 
-            p%loc%phi%now(i,j,k)= MAX(-z+0.1876,-sqrt( x**2 + y**2 + (z-p%glb%zend+0.5)**2) + 0.5)
+            p%loc%phi%now(i,j,k)= MAX(-z+0.1876,-sqrt( x**2 + y**2 + (z-0.8)**2) + 0.5)
         end if
         
     end do

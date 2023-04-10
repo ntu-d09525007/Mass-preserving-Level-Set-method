@@ -94,6 +94,7 @@ CALL p%COE%ALLOC(IS,IE,JS,JE,KS,KE)
 
 ! level set method
 CALL p%PHI%ALLOC(IS,IE,JS,JE,KS,KE)
+
 CALL p%VOF%ALLOC(IS,IE,JS,JE,KS,KE)
 CALL p%heavy%ALLOC(IS,IE,JS,JE,KS,KE)
 CALL p%sign%ALLOC(IS,IE,JS,JE,KS,KE)
@@ -138,9 +139,6 @@ call p%vort_adv%alloc(is,ie,js,je,ks,ke)
 call p%vort_tws%alloc(is,ie,js,je,ks,ke)
 call p%vort_baro%alloc(is,ie,js,je,ks,ke)
 call p%vort_visc%alloc(is,ie,js,je,ks,ke)
-
-! ibm
-! call p%ibm%solid%alloc(is,ie,js,je,ks,ke)
 
 end subroutine
 

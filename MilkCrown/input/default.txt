@@ -5,21 +5,21 @@ ooo     Number of threads
 ooo     Plot split (modify if segmentation fault occur when plotting)
 4
 ooo     Name of the problem 
-FallingDroplet_40
+MilkCrown_40
 ooo     Cells per unit length 
 40
 ooo     Number of ghost cell
 3
 ooo     Range of domain in X direction
--3.0 	3.0
+-3.5 	3.5
 ooo     Range of domain in Y direction
--3.0 	3.0
+-3.5 	3.5
 ooo     Range of domain in Z direction
-0.0  	6.5
+0.0  	4.0
 ooo     Time to stop / plot
 15.0            0.1
 ooo     Crount number ( advection / redistance )
-0.01            0.25
+0.005           0.25
 ooo     PPE iteration ( tolerance / w1 / w2 / valve )
 8.0             1.5         0.5         4.0
 ooo     SRK6 iteration ( tolerance / w )
@@ -27,7 +27,7 @@ ooo     SRK6 iteration ( tolerance / w )
 ooo     Level set interface width 
 1.5
 ooo     Problem parameters ( Prescribed / L / L+U / L+T / U+T )
-2
+3
 ooo     Density / Viscosity of fluid 1 ( phi > 0 )
 1000.0           0.0017
 ooo     Density / Viscosity of fluid 2 ( phi < 0 )
