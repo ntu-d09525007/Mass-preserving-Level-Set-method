@@ -5,7 +5,7 @@ MilkCrown
 ooo	Dimension of threads grid in X, Y, Z direction
 3 	3 	3
 ooo Nested OpenMP threads
-2
+1
 ooo	Multigrid level
 5
 ooo	Cells per unit length 
