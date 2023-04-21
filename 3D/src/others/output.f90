@@ -7,6 +7,7 @@ real(8) :: damfront, damh, r
 if( p%glb%iter == 1)then
     p%glb%ivol = p%glb%vol
     p%glb%ivolv = p%glb%volv
+    call p%sync
 endif
 
 ! level set method, loss of volume/mass in percentage
