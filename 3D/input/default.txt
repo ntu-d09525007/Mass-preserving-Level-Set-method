@@ -27,7 +27,7 @@ ooo	PPE iteration ( tolerance / w1 / w2 / valve )
 ooo	SRK6 iteration ( tolerance / w )
 10.0	0.5	
 ooo	Level set interface width 
-1.5
+1.0
 ooo	Problem parameters ( Prescribed / L / L+U / L+T / U+T / Wave study )
 3
 ooo	Density / Viscosity of fluid 1 ( phi > 0 )
