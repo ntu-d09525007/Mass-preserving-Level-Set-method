@@ -32,6 +32,8 @@ CHARACTER(100) :: NAME_OF_FILE
         do j = p%of(id)%loc%js, p%of(id)%loc%je
         do i = p%of(id)%loc%is, p%of(id)%loc%ie
 
+            p%of(id)%loc%vof%now = 0.0d0
+
             do ii = 1, ug
             do jj = 1, ug
             do kk = 1, ug
@@ -41,7 +43,7 @@ CHARACTER(100) :: NAME_OF_FILE
                 z = 0.5d0*( p%glb%z(i,j,k)+p%glb%z(i,j,k-1) ) + real(kk,8)*p%glb%dz/real(ug,8)
 
                 if(  z<= 0.1876 .or. sqrt(x**2+y**2+(z-0.8)**2)<=0.5 )then
-                    p%loc%vof%now(i,j,k) = p%loc%vof%now(i,j,k) +  1.0d0/real(ug,8)**3.0d0
+                    p%of(id)%loc%vof%now(i,j,k) = p%of(id)%loc%vof%now(i,j,k) +  1.0d0/real(ug,8)**3.0d0
                 end if
                 
             end do
