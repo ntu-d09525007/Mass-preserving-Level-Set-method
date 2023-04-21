@@ -3,7 +3,7 @@ use all
 !$ use omp_lib
 implicit none
 integer :: id, i, j, k, ug, ii,jj,kk
-real(8) :: x, y, z
+real(8) :: x, y, z, h
 CHARACTER(100) :: NAME_OF_FILE
     
     NAME_OF_FILE="default.txt"
@@ -24,6 +24,8 @@ CHARACTER(100) :: NAME_OF_FILE
         
     call p%show
 
+    h = 0.5*(p%glb%zstart + p%glb%zend)
+
     ug=30
     !$omp parallel do private(i,j,k,ii,jj,kk,x,y,z)
     do id = 0, p%glb%threads-1
@@ -42,7 +44,7 @@ CHARACTER(100) :: NAME_OF_FILE
                 y = 0.5d0*( p%glb%y(i,j,k)+p%glb%y(i,j-1,k) ) + real(jj,8)*p%glb%dy/real(ug,8)
                 z = 0.5d0*( p%glb%z(i,j,k)+p%glb%z(i,j,k-1) ) + real(kk,8)*p%glb%dz/real(ug,8)
 
-                if(  z<= 0.1876 .or. sqrt(x**2+y**2+(z-0.8)**2)<=0.5 )then
+                if(  z<= 0.1876 .or. sqrt(x**2+y**2+(z-h)**2)<=0.5 )then
                     p%of(id)%loc%vof%now(i,j,k) = p%of(id)%loc%vof%now(i,j,k) +  1.0d0/real(ug,8)**3.0d0
                 end if
                 
@@ -60,11 +62,11 @@ CHARACTER(100) :: NAME_OF_FILE
 
             if( z <= 0.1876 )then  
                 p%of(id)%loc%phi%now(i,j,k) = -z + 0.1876 
-            else if( sqrt( x**2 + y**2 + (z-0.8)**2 ) <= 0.5 )then
-                p%of(id)%loc%phi%now(i,j,k) = -sqrt( x**2 + y**2 + (z-0.8)**2) + 0.5
+            else if( sqrt( x**2 + y**2 + (z-h)**2 ) <= 0.5 )then
+                p%of(id)%loc%phi%now(i,j,k) = -sqrt( x**2 + y**2 + (z-h)**2) + 0.5
                 p%of(id)%loc%vel%z%now(i,j,k) = -1.0
             else 
-                p%of(id)%loc%phi%now(i,j,k)= MAX(-z+0.1876,-sqrt( x**2 + y**2 + (z-0.8)**2) + 0.5)
+                p%of(id)%loc%phi%now(i,j,k)= MAX(-z+0.1876,-sqrt( x**2 + y**2 + (z-h)**2) + 0.5)
             end if
             
         end do
@@ -109,6 +111,7 @@ CHARACTER(100) :: NAME_OF_FILE
     write(*,*) "plotting"
     call plot
     call p%plot
+    write(*,*) "plot finished"
     
     p%glb%ls_adv = 0.0d0
     p%glb%ls_red = 0.0d0

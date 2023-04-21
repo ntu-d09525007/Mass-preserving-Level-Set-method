@@ -119,26 +119,26 @@ p%ccdsolvers%y%is=js; p%ccdsolvers%y%ie=je; p%ccdsolvers%y%dx=dy; p%ccdsolvers%y
 p%ccdsolvers%z%is=ks; p%ccdsolvers%z%ie=ke; p%ccdsolvers%z%dx=dz; p%ccdsolvers%z%dt=dt
 
 ! vortex identification
-call p%vort%alloc(is,ie,js,je,ks,ke)
-call p%lamb%alloc(is,ie,js,je,ks,ke)
+! call p%vort%alloc(is,ie,js,je,ks,ke)
+! call p%lamb%alloc(is,ie,js,je,ks,ke)
 
-call p%q_cri%alloc(is,ie,js,je,ks,ke)
-call p%omega_cri%alloc(is,ie,js,je,ks,ke)
+! call p%q_cri%alloc(is,ie,js,je,ks,ke)
+! call p%omega_cri%alloc(is,ie,js,je,ks,ke)
 
-call p%lamb_div%alloc(is,ie,js,je,ks,ke)
+! call p%lamb_div%alloc(is,ie,js,je,ks,ke)
 
 !tensor
-call p%vel_ten%alloc(3,is,ie,js,je,ks,ke)
-call p%vor_ten%alloc(3,is,ie,js,je,ks,ke)
-call p%p_ten%alloc(1,is,ie,js,je,ks,ke)
-call p%rho_ten%alloc(1,is,ie,js,je,ks,ke)
-call p%mu_ten%alloc(1,is,ie,js,je,ks,ke)
+! call p%vel_ten%alloc(3,is,ie,js,je,ks,ke)
+! call p%vor_ten%alloc(3,is,ie,js,je,ks,ke)
+! call p%p_ten%alloc(1,is,ie,js,je,ks,ke)
+! call p%rho_ten%alloc(1,is,ie,js,je,ks,ke)
+! call p%mu_ten%alloc(1,is,ie,js,je,ks,ke)
 
 !vorticity production
-call p%vort_adv%alloc(is,ie,js,je,ks,ke)
-call p%vort_tws%alloc(is,ie,js,je,ks,ke)
-call p%vort_baro%alloc(is,ie,js,je,ks,ke)
-call p%vort_visc%alloc(is,ie,js,je,ks,ke)
+! call p%vort_adv%alloc(is,ie,js,je,ks,ke)
+! call p%vort_tws%alloc(is,ie,js,je,ks,ke)
+! call p%vort_baro%alloc(is,ie,js,je,ks,ke)
+! call p%vort_visc%alloc(is,ie,js,je,ks,ke)
 
 end subroutine
 
