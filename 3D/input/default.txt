@@ -4,10 +4,12 @@ ooo	Name of the problem
 MilkCrown
 ooo	Dimension of threads grid in X, Y, Z direction
 3 	3 	3
+ooo Nested OpenMP threads
+2
 ooo	Multigrid level
-6
+5
 ooo	Cells per unit length 
-64
+24
 ooo	Number of ghost cell
 3
 ooo	Range of domain in X direction
@@ -15,11 +17,11 @@ ooo	Range of domain in X direction
 ooo	Range of domain in Y direction
 -3.0		3.0
 ooo	Range of domain in Z direction
-0.0		6.0
+0.0			6.0
 ooo	Time to stop / plot
-15.0	0.05
+15.0		0.05
 ooo	Crount number ( advection / redistance )
-0.01	0.25
+0.01		0.25
 ooo	PPE iteration ( tolerance / w1 / w2 / valve )
 10.0	0.5		0.5		4.0
 ooo	SRK6 iteration ( tolerance / w )

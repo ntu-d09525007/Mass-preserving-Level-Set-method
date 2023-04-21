@@ -14,7 +14,7 @@ integer(8) :: cpustart, cpuend
 
     !$omp parallel do private(i,j,k)
     do id = 0, p%glb%threads-1
-
+        !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
         do k = p%of(id)%loc%ks, p%of(id)%loc%ke
         do j = p%of(id)%loc%js, p%of(id)%loc%je
         do i = p%of(id)%loc%is, p%of(id)%loc%ie
@@ -22,7 +22,7 @@ integer(8) :: cpustart, cpuend
         end do 
         end do
         end do
-        
+        !$omp end parallel do
         call p%of(id)%bc(0,p%of(id)%loc%phi%now)
     
     enddo
@@ -37,7 +37,7 @@ integer(8) :: cpustart, cpuend
 
     !$omp parallel do private(i,j)
     do id = 0, p%glb%threads-1
-
+        !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
         do k = p%of(id)%loc%ks, p%of(id)%loc%ke
         do j = p%of(id)%loc%js, p%of(id)%loc%je
         do i = p%of(id)%loc%is, p%of(id)%loc%ie
@@ -46,7 +46,7 @@ integer(8) :: cpustart, cpuend
         end do 
         end do
         end do
-        
+        !$omp end parallel do
         call p%of(id)%bc(0,p%of(id)%loc%phi%now)
     
     enddo
@@ -61,7 +61,7 @@ integer(8) :: cpustart, cpuend
 
     !$omp parallel do private(i,j)
     do id = 0, p%glb%threads-1
-
+        !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
         do k = p%of(id)%loc%ks, p%of(id)%loc%ke
         do j = p%of(id)%loc%js, p%of(id)%loc%je
         do i = p%of(id)%loc%is, p%of(id)%loc%ie
@@ -70,7 +70,7 @@ integer(8) :: cpustart, cpuend
         end do 
         end do
         end do
-        
+        !$omp end parallel do
         call p%of(id)%bc(0,p%of(id)%loc%phi%now)
     
     enddo
@@ -206,27 +206,34 @@ integer :: id,i,j,k
 !$omp parallel do private(i,j,k)
 do id = 0, p%glb%threads-1
 
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(j,k)
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke
     do j = p%of(id)%loc%js, p%of(id)%loc%je
         call p%of(id)%loc%ccdsolvers%x%solve("uccd",p%of(id)%loc%phi%now(:,j,k),&
             &p%of(id)%loc%tdata%x%s1(:,j,k),p%of(id)%loc%tdata%x%s2(:,j,k),p%of(id)%loc%nvel%x%old(:,j,k))
     end do 
     end do
+    !$omp end parallel do
 
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(i,k)
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
         call p%of(id)%loc%ccdsolvers%y%solve("uccd",p%of(id)%loc%phi%now(i,:,k),&
             p%of(id)%loc%tdata%y%s1(i,:,k),p%of(id)%loc%tdata%y%s2(i,:,k),p%of(id)%loc%nvel%y%old(i,:,k))
     end do
     end do
+    !$omp end parallel do
 
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(j,i)
     do j = p%of(id)%loc%js, p%of(id)%loc%je
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
         call p%of(id)%loc%ccdsolvers%z%solve("uccd",p%of(id)%loc%phi%now(i,j,:),&
             p%of(id)%loc%tdata%z%s1(i,j,:),p%of(id)%loc%tdata%z%s2(i,j,:),p%of(id)%loc%nvel%z%old(i,j,:))
     end do
     end do
+    !$omp end parallel do
 
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke
     do j = p%of(id)%loc%js, p%of(id)%loc%je
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
@@ -236,7 +243,8 @@ do id = 0, p%glb%threads-1
     enddo
     enddo
     enddo
-
+    !$omp end parallel do
+    
 enddo
 !$omp end parallel do 
     

@@ -33,6 +33,7 @@ real(8) :: src
 !$omp parallel do private(i,j,k,src)
 do id = 0, p%glb%threads-1
         
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k,src)
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke
     do j = p%of(id)%loc%js, p%of(id)%loc%je
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
@@ -49,6 +50,7 @@ do id = 0, p%glb%threads-1
     end do
     end do 
     end do
+    !$omp end parallel do
     
 enddo        
 !$omp end parallel do

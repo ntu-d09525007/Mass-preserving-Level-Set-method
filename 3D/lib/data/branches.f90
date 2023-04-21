@@ -10,7 +10,7 @@ character(20) :: name
 integer :: level
 integer :: method
 integer :: how_to_paras
-integer :: grid_x, grid_y, grid_z, threads ! numbers of CPUs 
+integer :: grid_x, grid_y, grid_z, threads, nthreads ! numbers of CPUs 
 integer :: node_x, node_y, node_z
 integer :: ug ! grid per unit length
 integer :: ghc ! ghost cell

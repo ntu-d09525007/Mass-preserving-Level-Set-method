@@ -43,6 +43,7 @@ real(8) :: dif_x, dif_y, dif_z
 
 if(reset)then
 
+    !$omp parallel do num_threads(q%glb%nthreads) collapse(3)
     do k = q%loc%ks, q%loc%ke
     do j = q%loc%js, q%loc%je
     do i = q%loc%is, q%loc%ie
@@ -52,9 +53,12 @@ if(reset)then
     enddo
     enddo
     enddo
+    !$omp end parallel do
 
 endif
 
+!$omp parallel do num_threads(q%glb%nthreads) collapse(3) private(rho_,mu_,delta_,curv_,xx,yy,zz,ux,uy,uz,vx,vy,vz,phix,phiy,phiz) &
+!$omp& private(dif_x, dif_y, dif_z)
 do k = q%loc%ks, q%loc%ke
 do j = q%loc%js, q%loc%je
 do i = q%loc%is, q%loc%ie
@@ -142,6 +146,7 @@ do i = q%loc%is, q%loc%ie
 enddo
 enddo
 enddo
+!$omp end parallel do
 
 end subroutine
 

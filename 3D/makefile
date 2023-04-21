@@ -1,6 +1,6 @@
 f90=ifort
 omp=-qopenmp 
-lapack=-mkl=sequential 
+lapack=-qmkl=sequential 
 bmem=-heap-arrays
 opt=-O3 -ipo -ipo-jobs8
 flags=$(omp) $(lapack) $(bmm) $(opt) -module $(moddir)

@@ -68,6 +68,7 @@ integer :: id,i,j,k
     !$omp parallel do private(i,j,k)
     do id = 0, p%glb%threads-1
         
+        !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
         do k = p%of(id)%loc%ks, p%of(id)%loc%ke
         do j = p%of(id)%loc%js, p%of(id)%loc%je
         do i = p%of(id)%loc%is, p%of(id)%loc%ie
@@ -129,6 +130,7 @@ integer :: id,i,j,k
         end do
         end do
         end do
+        !$omp end parallel do
         
     enddo
     !$omp end parallel do
@@ -148,6 +150,7 @@ if( present(w) )then
     !$omp parallel do private(i,j,k)
     do id = 0, p%glb%threads-1
         
+        !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
         do k = p%of(id)%loc%ks-p%of(id)%glb%ghc, p%of(id)%loc%ke+p%of(id)%glb%ghc
         do j = p%of(id)%loc%js-p%of(id)%glb%ghc, p%of(id)%loc%je+p%of(id)%glb%ghc
         do i = p%of(id)%loc%is-p%of(id)%glb%ghc, p%of(id)%loc%ie+p%of(id)%glb%ghc   
@@ -155,6 +158,7 @@ if( present(w) )then
         enddo
         enddo
         enddo
+        !$omp end parallel do
         
     enddo
     !$omp end parallel do
@@ -162,9 +166,10 @@ if( present(w) )then
 else
 
     if(iter>3)then
+    
         !$omp parallel do private(i,j,k)
         do id = 0, p%glb%threads-1
-            
+            !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
             do k = p%of(id)%loc%ks-p%of(id)%glb%ghc, p%of(id)%loc%ke+p%of(id)%glb%ghc
             do j = p%of(id)%loc%js-p%of(id)%glb%ghc, p%of(id)%loc%je+p%of(id)%glb%ghc
             do i = p%of(id)%loc%is-p%of(id)%glb%ghc, p%of(id)%loc%ie+p%of(id)%glb%ghc   
@@ -172,13 +177,15 @@ else
             enddo
             enddo
             enddo
-            
+            !$omp end parallel do
         enddo
         !$omp end parallel do
+
     else
+
         !$omp parallel do private(i,j,k)
         do id = 0, p%glb%threads-1
-            
+            !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
             do k = p%of(id)%loc%ks-p%of(id)%glb%ghc, p%of(id)%loc%ke+p%of(id)%glb%ghc
             do j = p%of(id)%loc%js-p%of(id)%glb%ghc, p%of(id)%loc%je+p%of(id)%glb%ghc
             do i = p%of(id)%loc%is-p%of(id)%glb%ghc, p%of(id)%loc%ie+p%of(id)%glb%ghc   
@@ -186,16 +193,18 @@ else
             enddo
             enddo
             enddo
-            
+            !$omp end parallel do
         enddo
         !$omp end parallel do
+
     endif
 
 endif
 
 !$omp parallel do private(i,j,k)
 do id = 0, p%glb%threads-1
-    
+
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke
     do j = p%of(id)%loc%js, p%of(id)%loc%je
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
@@ -213,7 +222,9 @@ do id = 0, p%glb%threads-1
     enddo
     enddo
     enddo
-    
+    !$omp end parallel do
+
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
     do k = 1, p%of(id)%loc%mg(1)%nz
     do j = 1, p%of(id)%loc%mg(1)%ny
     do i = 1, p%of(id)%loc%mg(1)%nx
@@ -224,7 +235,7 @@ do id = 0, p%glb%threads-1
     enddo
     enddo
     enddo
-
+    !$omp end parallel do
 enddo    
 !$omp end parallel do
 
@@ -241,7 +252,8 @@ real(8) :: src
 
 !$omp parallel do private(i,j,k,src)
 do id = 0, p%glb%threads-1
-    
+
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k,src)
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke
     do j = p%of(id)%loc%js, p%of(id)%loc%je
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
@@ -267,7 +279,7 @@ do id = 0, p%glb%threads-1
     enddo
     enddo
     enddo
-    
+    !$omp end parallel do
 enddo
 !$omp end parallel do
 
@@ -283,7 +295,8 @@ integer :: id,i,j,k
 
 !$omp parallel do private(i,j,k)
 do id = 0, p%glb%threads-1
-    
+
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke
     do j = p%of(id)%loc%js, p%of(id)%loc%je
     do i = p%of(id)%loc%is, p%of(id)%loc%ie 
@@ -294,7 +307,7 @@ do id = 0, p%glb%threads-1
     enddo
     enddo
     enddo
-    
+    !$omp end parallel do
     call p%of(id)%bc(0,p%of(id)%loc%p%now)
 
 enddo    

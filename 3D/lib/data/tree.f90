@@ -108,6 +108,8 @@ integer :: x,y,z
  read(526,*)
  read(526,*)p%glb%grid_x, p%glb%grid_y, p%glb%grid_z
  read(526,*)
+ read(526,*)p%glb%nthreads
+ read(526,*)
  read(526,*)p%glb%level
  read(526,*)
  read(526,*)p%glb%ug
@@ -203,6 +205,7 @@ real(8) :: kh,ap
     allocate( p%of(0:p%glb%threads-1))
 
     call omp_set_dynamic(.false.)
+    call omp_set_nested(.true.)
     call omp_set_num_threads(min(omp_get_max_threads(),p%glb%threads))
 
     write(*,*)"finish allocating nmumber of jobs"
