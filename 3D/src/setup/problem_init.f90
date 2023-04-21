@@ -24,7 +24,7 @@ CHARACTER(100) :: NAME_OF_FILE
         
     call p%show
 
-    h = 0.5*(p%glb%zstart + p%glb%zend)
+    h = 0.7!0.5*(p%glb%zstart + p%glb%zend)
 
     ug=30
     !$omp parallel do private(i,j,k,ii,jj,kk,x,y,z)
