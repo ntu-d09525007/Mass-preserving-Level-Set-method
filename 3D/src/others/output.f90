@@ -4,6 +4,10 @@ implicit none
 integer :: i,j,k,id
 real(8) :: damfront, damh, r
 
+if( p%glb%iter == 1)then
+    p%glb%ivol = p%glb%vol
+    p%glb%ivolv = p%glb%volv
+endif
 
 ! level set method, loss of volume/mass in percentage
 write(p%fil%ls_mv,*)p%glb%time,100.0d0*(p%glb%imass-p%glb%mass)/p%glb%imass,100.0d0*(p%glb%ivol-p%glb%vol)/p%glb%ivol
