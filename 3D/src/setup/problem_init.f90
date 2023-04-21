@@ -24,7 +24,7 @@ CHARACTER(100) :: NAME_OF_FILE
         
     call p%show
 
-    h = 0.7!0.5*(p%glb%zstart + p%glb%zend)
+    h = 0.1876 + 0.5 + 2.0 * p%glb%ls_wid
 
     ug=30
     !$omp parallel do private(i,j,k,ii,jj,kk,x,y,z)
@@ -35,7 +35,7 @@ CHARACTER(100) :: NAME_OF_FILE
         do j = p%of(id)%loc%js, p%of(id)%loc%je
         do i = p%of(id)%loc%is, p%of(id)%loc%ie
 
-            p%of(id)%loc%vof%now = 0.0d0
+            p%of(id)%loc%vof%now(i,j,k) = 0.0d0
 
             do ii = 1, ug
             do jj = 1, ug
@@ -62,7 +62,7 @@ CHARACTER(100) :: NAME_OF_FILE
             p%of(id)%loc%vel%z%now(i,j,k) = 0.0d0
 
             if( z <= 0.1876 )then  
-                p%of(id)%loc%phi%now(i,j,k) = -z + 0.1876 
+                p%of(id)%loc%phi%now(i,j,k) = -z + 0.1876
             else if( sqrt( x**2 + y**2 + (z-h)**2 ) <= 0.5 )then
                 p%of(id)%loc%phi%now(i,j,k) = -sqrt( x**2 + y**2 + (z-h)**2) + 0.5
                 p%of(id)%loc%vel%z%now(i,j,k) = -1.0
@@ -112,9 +112,8 @@ CHARACTER(100) :: NAME_OF_FILE
 
     write(*,*) "plotting"
     call plot
-    call p%plot
     write(*,*) "plot finished"
-    
+
     p%glb%ls_adv = 0.0d0
     p%glb%ls_red = 0.0d0
     p%glb%ppe    = 0.0d0

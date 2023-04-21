@@ -273,14 +273,14 @@ integer(8) :: cpustart, cpuend
         do j = p%of(id)%loc%js-p%glb%ghc, p%of(id)%loc%je+p%glb%ghc
         do i = p%of(id)%loc%is-p%glb%ghc, p%of(id)%loc%ie+p%glb%ghc
             p%of(id)%loc%vof%tmp(i,j,k) = p%of(id)%loc%phi%now(i,j,k)   
-            p%of(id)%loc%phi%now(i,j,k) = p%of(id)%loc%vof%now(i,j,k) - 0.5d0
+            p%of(id)%loc%phi%now(i,j,k) = 2.0 * p%of(id)%loc%vof%now(i,j,k) - 1.0d0
         end do
         end do
         end do
     enddo
     !$omp end parallel do
 
-    call level_set_rk3_redis(0,10.0d0*p%glb%ls_wid)
+    call level_set_rk3_redis(0,5.0d0*p%glb%ls_wid)
 
     !$omp parallel do private(i,j,k)
     do id = 0, p%glb%threads-1
