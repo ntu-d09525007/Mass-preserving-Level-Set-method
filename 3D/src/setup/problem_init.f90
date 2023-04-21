@@ -84,7 +84,7 @@ CHARACTER(100) :: NAME_OF_FILE
     call pt%phi%sync
     call pt%vof%sync
 
-    call level_set_rk3_redis(0)
+    !call level_set_rk3_redis(0)
 
     call p%node_vel
     call pt%nvel%sync

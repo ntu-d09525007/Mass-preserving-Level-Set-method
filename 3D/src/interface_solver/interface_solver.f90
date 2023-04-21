@@ -28,8 +28,8 @@ implicit none
 
 !call level_set_symplectic_solver 
 call level_set_rk3_solver
+if(mod(p%glb%iter,5).eq.0)call level_set_rk3_redis(1,2.5d0*p%glb%dx)
 call mass_preserving_level_set
-if(mod(p%glb%iter,5).eq.0)call level_set_rk3_redis(1,1.5d0*p%glb%dx)
 
 end subroutine
 

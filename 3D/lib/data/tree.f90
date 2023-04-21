@@ -194,9 +194,9 @@ real(8) :: kh,ap
     open(unit=p%fil%ls_mv,file="./out/"//trim(p%glb%name)//"_MVloss.plt")
     write(p%fil%ls_mv,*)'variables = "T" "Loss of mass" "Loss of Volume" '
 
-    p%fil%damdata = 16
-    open(unit=p%fil%damdata,file="./out/"//trim(p%glb%name)//"_DamData.plt")
-    write(p%fil%damdata,*)'variables = "T" "Damfront" "Wall" '
+    ! p%fil%damdata = 16
+    ! open(unit=p%fil%damdata,file="./out/"//trim(p%glb%name)//"_DamData.plt")
+    ! write(p%fil%damdata,*)'variables = "T" "Damfront" "Wall" '
 
     p%glb%threads = p%glb%grid_x * p%glb%grid_y * p%glb%grid_z
     
