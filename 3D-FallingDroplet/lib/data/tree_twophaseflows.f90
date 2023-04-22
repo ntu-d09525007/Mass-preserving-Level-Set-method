@@ -9,7 +9,7 @@ pi = dacos(-1.0_8)
     
 !$omp parallel do private(i,j,k,x,heavy,hp)
 do id = 0, p%glb%threads-1
-    
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k,x,heavy,hp)
     do k = p%of(id)%loc%ks-p%glb%ghc, p%of(id)%loc%ke+p%glb%ghc
     do j = p%of(id)%loc%js-p%glb%ghc, p%of(id)%loc%je+p%glb%ghc
     do i = p%of(id)%loc%is-p%glb%ghc, p%of(id)%loc%ie+p%glb%ghc
@@ -36,7 +36,7 @@ do id = 0, p%glb%threads-1
     end do
     end do
     end do
-    
+    !$omp end parallel do
 enddo
 !$omp end parallel  do
 
@@ -52,7 +52,7 @@ call p%ls_funs
 
 !$omp parallel do private(i,j,k,heavy)
 do id = 0, p%glb%threads-1
-    
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k,heavy)
     do k = p%of(id)%loc%ks-p%glb%ghc, p%of(id)%loc%ke+p%glb%ghc        
     do j = p%of(id)%loc%js-p%glb%ghc, p%of(id)%loc%je+p%glb%ghc
     do i = p%of(id)%loc%is-p%glb%ghc, p%of(id)%loc%ie+p%glb%ghc
@@ -68,7 +68,7 @@ do id = 0, p%glb%threads-1
     end do
     end do
     end do
- 
+    !$omp end parallel do
 enddo       
 !$omp end parallel do
     
