@@ -169,6 +169,7 @@ else
     
         !$omp parallel do private(i,j,k)
         do id = 0, p%glb%threads-1
+
             !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
             do k = p%of(id)%loc%ks-p%of(id)%glb%ghc, p%of(id)%loc%ke+p%of(id)%glb%ghc
             do j = p%of(id)%loc%js-p%of(id)%glb%ghc, p%of(id)%loc%je+p%of(id)%glb%ghc
@@ -178,6 +179,7 @@ else
             enddo
             enddo
             !$omp end parallel do
+
         enddo
         !$omp end parallel do
 
@@ -185,6 +187,7 @@ else
 
         !$omp parallel do private(i,j,k)
         do id = 0, p%glb%threads-1
+
             !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
             do k = p%of(id)%loc%ks-p%of(id)%glb%ghc, p%of(id)%loc%ke+p%of(id)%glb%ghc
             do j = p%of(id)%loc%js-p%of(id)%glb%ghc, p%of(id)%loc%je+p%of(id)%glb%ghc
@@ -194,6 +197,7 @@ else
             enddo
             enddo
             !$omp end parallel do
+
         enddo
         !$omp end parallel do
 
@@ -236,6 +240,7 @@ do id = 0, p%glb%threads-1
     enddo
     enddo
     !$omp end parallel do
+    
 enddo    
 !$omp end parallel do
 

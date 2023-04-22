@@ -285,6 +285,7 @@ integer(8) :: cpustart, cpuend
     
     !$omp parallel do private(i,j,k)
     do id = 0, p%glb%threads-1
+        !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
         do k = p%of(id)%loc%ks-p%glb%ghc, p%of(id)%loc%ke+p%glb%ghc
         do j = p%of(id)%loc%js-p%glb%ghc, p%of(id)%loc%je+p%glb%ghc
         do i = p%of(id)%loc%is-p%glb%ghc, p%of(id)%loc%ie+p%glb%ghc
@@ -293,6 +294,7 @@ integer(8) :: cpustart, cpuend
         end do
         end do
         end do
+        !$omp end parallel do
     enddo
     !$omp end parallel do
 
@@ -300,7 +302,7 @@ integer(8) :: cpustart, cpuend
 
     !$omp parallel do private(i,j,k)
     do id = 0, p%glb%threads-1
-
+        !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
         do k = p%of(id)%loc%ks-p%glb%ghc, p%of(id)%loc%ke+p%glb%ghc
         do j = p%of(id)%loc%js-p%glb%ghc, p%of(id)%loc%je+p%glb%ghc
         do i = p%of(id)%loc%is-p%glb%ghc, p%of(id)%loc%ie+p%glb%ghc
@@ -308,7 +310,7 @@ integer(8) :: cpustart, cpuend
         end do
         end do
         end do
-
+        !$omp end parallel do
         call p%of(id)%bc(0,p%of(id)%loc%phi%now)
         
     end do

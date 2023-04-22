@@ -281,7 +281,8 @@ call pt%phi%sync
 
 !$omp parallel do private(i,j,k,a,b,c,upp,upm,ump,umm,vpp,vpm,vmp,vmm,wpp,wpm,wmp,wmm)
 do id = 0, p%glb%threads-1
-    !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k,a,b,c,upp,upm,ump,umm,vpp,vpm,vmp,vmm,wpp,wpm,wmp,wmm)
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(3) &
+    !$omp& private(i,j,k,a,b,c,upp,upm,ump,umm,vpp,vpm,vmp,vmm,wpp,wpm,wmp,wmm)
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke 
     do j = p%of(id)%loc%js, p%of(id)%loc%je
     do i = p%of(id)%loc%is, p%of(id)%loc%ie

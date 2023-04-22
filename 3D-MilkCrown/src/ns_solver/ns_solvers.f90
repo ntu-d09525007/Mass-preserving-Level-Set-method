@@ -71,7 +71,8 @@ sumdiv=0.0d0
 !$omp parallel do private(i,j,k,ux,vy,wz), reduction(max:div), reduction(+:sumdiv)
 do id = 0, p%glb%threads-1
     
-    !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k,ux,vy,wz), reduction(max:div), reduction(+:sumdiv)
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(3) &
+    !$omp& private(i,j,k,ux,vy,wz), reduction(max:div), reduction(+:sumdiv)
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke
     do j = p%of(id)%loc%js, p%of(id)%loc%je
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
