@@ -1,7 +1,7 @@
 ooo	Method to capture interface ( LS / MPLS / CLSVOF ) 
 2
 ooo	Name of the problem 
-MilkCrown
+FallingDroplet
 ooo	Dimension of threads grid in X, Y, Z direction
 3 	3 	3
 ooo Nested OpenMP threads
