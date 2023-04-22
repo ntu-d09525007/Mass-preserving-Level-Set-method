@@ -37,7 +37,7 @@ integer(8) :: cpustart, cpuend
     !---------------------------
     call level_set_rk3_source
 
-    !$omp parallel do private(i,j)
+    !$omp parallel do private(i,j,k)
     do id = 0, p%glb%threads-1
 
         !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
@@ -63,7 +63,7 @@ integer(8) :: cpustart, cpuend
     !---------------------------
     call level_set_rk3_source
 
-    !$omp parallel do private(i,j)
+    !$omp parallel do private(i,j,k)
     do id = 0, p%glb%threads-1
 
         !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
