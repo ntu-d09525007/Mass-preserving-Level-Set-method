@@ -43,6 +43,8 @@ do
     
 enddo
 
+    call calculate_interface_loss
+
 contains
 
 include 'included.f90'
