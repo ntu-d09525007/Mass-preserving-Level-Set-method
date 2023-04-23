@@ -43,7 +43,8 @@ do iter = 1, 2
 
     !$omp parallel do private(i,j,k)
     do id = 0, p%glb%threads-1
-        !$omp parallel do num_threads(p%glb%nthreads) collapse(3)
+
+        !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
         do k = p%of(id)%loc%ks, p%of(id)%loc%ke
         do j = p%of(id)%loc%js, p%of(id)%loc%je
         do i = p%of(id)%loc%is, p%of(id)%loc%ie
@@ -54,6 +55,7 @@ do iter = 1, 2
         end do
         end do
         !$omp end parallel do
+        
         call p%of(id)%bc(0,p%of(id)%loc%phi%now)
     
     enddo   
