@@ -199,8 +199,6 @@ do id = 0, p%glb%threads-1
                                   &   ( p%of(id)%loc%tdata%y%s2(i,j-1,k)-p%of(id)%loc%tdata%y%s2(i,j,k) ) / p%glb%dy + &
                                   &   ( p%of(id)%loc%tdata%z%s1(i,j,k-1)-p%of(id)%loc%tdata%z%s1(i,j,k) ) / p%glb%dz + &
                                   &   ( p%of(id)%loc%tdata%z%s2(i,j,k-1)-p%of(id)%loc%tdata%z%s2(i,j,k) ) / p%glb%dz
-
-        p%of(id)%loc%phi%tmp(i,j,k) = p%of(id)%loc%phi%tmp(i,j,k) * -1.0d0
     enddo
     enddo
     enddo
