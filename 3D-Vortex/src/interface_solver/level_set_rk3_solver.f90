@@ -328,6 +328,8 @@ c1 = 0.2089141306d0
 c2 = 0.4999999998d0
 c3 = 0.2910858692d0
     
+call wenojs_flux_split(f,g,fp,gm,is,ie,ghc)
+
 do i = is-ghc+3, ie+ghc-4
     
     b1 = 13.0d0*(g(i-2)-2.0d0*g(i-1)+g(i))**2.0d0   + 3.0d0*(    g(i-2)-4.0d0*g(i-1)+3.0d0*g(i))**2.0d0
