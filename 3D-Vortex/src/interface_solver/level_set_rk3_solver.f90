@@ -91,8 +91,8 @@ end subroutine
 subroutine level_set_rk3_source()
 implicit none
 
-!call level_set_rk3_source_weno
-call level_set_rk3_source_ccd
+call level_set_rk3_source_weno
+!call level_set_rk3_source_ccd
 
 end subroutine
 
@@ -141,7 +141,7 @@ do id = 0, p%glb%threads-1
     !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(i,j,k)
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke
     do j = p%of(id)%loc%js, p%of(id)%loc%je
-        call wenojs_flux_split(p%of(id)%loc%tdata%x%s2(:,j,k),p%of(id)%loc%tdata%x%s1(:,j,k),&
+        call crweno_flux_split(p%of(id)%loc%tdata%x%s2(:,j,k),p%of(id)%loc%tdata%x%s1(:,j,k),&
                                p%of(id)%loc%tdata%x%ss2(:,j,k),p%of(id)%loc%tdata%x%ss1(:,j,k),&
                                p%of(id)%loc%is,p%of(id)%loc%ie,p%of(id)%glb%ghc)
     end do 
@@ -151,7 +151,7 @@ do id = 0, p%glb%threads-1
     !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(i,j,k)
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
-        call wenojs_flux_split(p%of(id)%loc%tdata%y%s2(i,:,k),p%of(id)%loc%tdata%y%s1(i,:,k),&
+        call crweno_flux_split(p%of(id)%loc%tdata%y%s2(i,:,k),p%of(id)%loc%tdata%y%s1(i,:,k),&
                                p%of(id)%loc%tdata%y%ss2(i,:,k),p%of(id)%loc%tdata%y%ss1(i,:,k),&
                                p%of(id)%loc%js,p%of(id)%loc%je,p%of(id)%glb%ghc)
     end do
@@ -161,7 +161,7 @@ do id = 0, p%glb%threads-1
     !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(i,j,k)
     do j = p%of(id)%loc%js, p%of(id)%loc%je
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
-        call wenojs_flux_split(p%of(id)%loc%tdata%z%s2(i,j,:),p%of(id)%loc%tdata%z%s1(i,j,:),&
+        call crweno_flux_split(p%of(id)%loc%tdata%z%s2(i,j,:),p%of(id)%loc%tdata%z%s1(i,j,:),&
                                p%of(id)%loc%tdata%z%ss2(i,j,:),p%of(id)%loc%tdata%z%ss1(i,j,:),&
                                p%of(id)%loc%ks,p%of(id)%loc%ke,p%of(id)%glb%ghc)
     end do
