@@ -5,11 +5,10 @@ implicit none
 integer :: i,j,k,id,iter
 real(8) :: lam, plam
 
-call p%curv()
-call pt%normals%sync
-
-do iter = 1, 20
+do iter = 1, 2
     
+    call p%surface_norms2
+    call pt%normals%sync
     call p%ls_mv()
     
     lam = 0.0_8
