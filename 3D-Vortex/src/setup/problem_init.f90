@@ -115,11 +115,15 @@ CHARACTER(100) :: NAME_OF_FILE
     p%glb%red_error = 0.0d0
 
     p%glb%loss_mass_avg = 0.0d0
+    p%glb%loss_mass_max = 0.0d0
     p%glb%loss_vol_avg = 0.0d0
+    p%glb%loss_vol_max = 0.0d0
     p%glb%loss_int = 0.0d0
 
     p%glb%loss_mass_avgv = 0.0d0
+    p%glb%loss_mass_maxv = 0.0d0
     p%glb%loss_vol_avgv = 0.0d0
+    p%glb%loss_vol_maxv = 0.0d0
     p%glb%loss_intv = 0.0d0
 
     p%glb%iter = 0

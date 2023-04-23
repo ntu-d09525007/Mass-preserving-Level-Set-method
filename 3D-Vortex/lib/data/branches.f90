@@ -23,7 +23,9 @@ real(8) :: dx, dy, dz, dt, rdt
 real(8) :: mass, vol, imass, ivol
 real(8) :: massv, volv, imassv, ivolv
 real(8) :: loss_mass_avg, loss_mass_avgv
+real(8) :: loss_mass_max, loss_mass_maxv
 real(8) :: loss_vol_avg, loss_vol_avgv
+real(8) :: loss_vol_max, loss_vol_maxv
 real(8) :: loss_int, loss_intv
 real(8) :: re, we, fr
 real(8) :: t_w, t_tol
