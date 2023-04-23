@@ -138,7 +138,6 @@ call pt%tdataz%sync
 !$omp parallel do private(i,j,k)
 do id = 0, p%glb%threads-1
 
-    !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(i,j,k)
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke
     do j = p%of(id)%loc%js, p%of(id)%loc%je
         call crweno_flux_split(p%of(id)%loc%tdata%x%s2(:,j,k),p%of(id)%loc%tdata%x%s1(:,j,k),&
@@ -146,9 +145,7 @@ do id = 0, p%glb%threads-1
                                p%of(id)%loc%is,p%of(id)%loc%ie,p%of(id)%glb%ghc)
     end do 
     end do
-    !$omp end parallel do 
-
-    !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(i,j,k)
+    
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
         call crweno_flux_split(p%of(id)%loc%tdata%y%s2(i,:,k),p%of(id)%loc%tdata%y%s1(i,:,k),&
@@ -156,9 +153,7 @@ do id = 0, p%glb%threads-1
                                p%of(id)%loc%js,p%of(id)%loc%je,p%of(id)%glb%ghc)
     end do
     end do
-    !$omp end parallel do
-
-    !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(i,j,k)
+    
     do j = p%of(id)%loc%js, p%of(id)%loc%je
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
         call crweno_flux_split(p%of(id)%loc%tdata%z%s2(i,j,:),p%of(id)%loc%tdata%z%s1(i,j,:),&
@@ -166,7 +161,6 @@ do id = 0, p%glb%threads-1
                                p%of(id)%loc%ks,p%of(id)%loc%ke,p%of(id)%glb%ghc)
     end do
     end do
-    !$omp end parallel do
 
     !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke
