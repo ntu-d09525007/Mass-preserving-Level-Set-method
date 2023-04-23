@@ -15,6 +15,10 @@ call problem_init
 
 do 
     
+    if( p%glb%time + p%glb%dt > p%glb%t2s )then
+        p%glb%dt = p%glb%t2s - p%glb%time
+    endif
+    
     p%glb%time = p%glb%time + p%glb%dt 
     p%glb%iter = p%glb%iter + 1 
     call p%sync 
@@ -24,7 +28,7 @@ do
  
     call interface_solver
     !call ns_solver
-    !call plot
+    call plot
 
     call p%ls_mv
     if( mod(p%glb%iter,5)==0 )then
@@ -39,7 +43,7 @@ do
     endif
     call output 
 
-    if( p%glb%time > p%glb%t2s ) exit
+    if( p%glb%time + 1.0d-10 > p%glb%t2s ) exit
     
 enddo
 
