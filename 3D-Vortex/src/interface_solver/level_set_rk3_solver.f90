@@ -163,9 +163,9 @@ do id = 0, p%glb%threads-1
     end do
 
     !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
-    do k = p%of(id)%loc%ks, p%of(id)%loc%ke
-    do j = p%of(id)%loc%js-p%glb%ghc+2, p%of(id)%loc%je+p%glb%ghc-3
-    do i = p%of(id)%loc%is-p%glb%ghc+2, p%of(id)%loc%ie+p%glb%ghc-3
+    do k = p%of(id)%loc%ks-p%glb%ghc, p%of(id)%loc%ke+p%glb%ghc
+    do j = p%of(id)%loc%js-p%glb%ghc, p%of(id)%loc%je+p%glb%ghc
+    do i = p%of(id)%loc%is-p%glb%ghc, p%of(id)%loc%ie+p%glb%ghc
         p%of(id)%loc%tdata%x%s1(i,j,k) = p%of(id)%loc%tdata%x%ss1(i,j,k)
         p%of(id)%loc%tdata%x%s2(i,j,k) = p%of(id)%loc%tdata%x%ss2(i,j,k)
 
@@ -199,6 +199,8 @@ do id = 0, p%glb%threads-1
                                   &   ( p%of(id)%loc%tdata%y%s2(i,j-1,k)-p%of(id)%loc%tdata%y%s2(i,j,k) ) / p%glb%dy + &
                                   &   ( p%of(id)%loc%tdata%z%s1(i,j,k-1)-p%of(id)%loc%tdata%z%s1(i,j,k) ) / p%glb%dz + &
                                   &   ( p%of(id)%loc%tdata%z%s2(i,j,k-1)-p%of(id)%loc%tdata%z%s2(i,j,k) ) / p%glb%dz
+
+        p%of(id)%loc%phi%tmp(i,j,k) = p%of(id)%loc%phi%tmp(i,j,k) * -1.0d0
     enddo
     enddo
     enddo
