@@ -183,7 +183,7 @@ do id = 0, p%glb%threads-1
     enddo
     enddo
     enddo
-    !$omp ned parallel do
+    !$omp end parallel do
 
 enddo
 !$omp end parallel do
