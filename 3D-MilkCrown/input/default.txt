@@ -48,6 +48,8 @@ ooo	Dimensionless parameters ( Re, Fr, We )  !!! We should not be zero
 1000.0		0.4096		1.0
 ooo	Density / Viscosity ratio of fluid 1, 2
 0.001		0.01
+ooo Inverse Marker function
+0
 ooo	Velocity boundary condition in X direction ( no-slip / slip / non-reflective )
 1	1
 ooo	Velocity boundary condition in Y direction ( no-slip / slip / non-reflective )

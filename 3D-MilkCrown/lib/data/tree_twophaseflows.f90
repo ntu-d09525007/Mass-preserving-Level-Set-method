@@ -60,7 +60,7 @@ do id = 0, p%glb%threads-1
         heavy = p%of(id)%loc%vof%now(i,j,k)
         if( p%glb%method .ne. 3)heavy = p%of(id)%loc%heavy%now(i,j,k)
 
-        !heavy = p%of(id)%loc%heavy%now(i,j,k)
+        if( p%glb%inverse ) heavy = 1.0d0 - heavy
         
         p%of(id)%loc%rho%now(i,j,k) = heavy + p%glb%rho_12 * (1.0_8 - heavy )
         p%of(id)%loc%mu%now(i,j,k)  = heavy + p%glb%mu_12  * (1.0_8 - heavy )
@@ -80,26 +80,30 @@ implicit none
 class(manager) :: p
 integer :: id, i, j, k
 real(8) :: mass, vol, rho
-real(8) :: dv
+real(8) :: dv, marker
 
 dv = p%glb%dx * p%glb%dy * p%glb%dz
 
-call p%rho_mu
+call p%ls_funs
 
 !===========================  LS 
 
 mass = 0.0_8; vol=0.0_8
 
-!$omp parallel do private(i,j,k,rho), reduction(+:mass,vol)    
+!$omp parallel do private(i,j,k,rho,marker), reduction(+:mass,vol)    
 do id = 0, p%glb%threads-1
     
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke
     do j = p%of(id)%loc%js, p%of(id)%loc%je
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
         
-        rho = p%of(id)%loc%heavy%now(i,j,k) + p%glb%rho_12 * (1.0d0 - p%of(id)%loc%heavy%now(i,j,k))
-        mass = mass + rho*p%of(id)%loc%heavy%now(i,j,k)*dv
-        vol = vol + p%of(id)%loc%heavy%now(i,j,k)*dv
+        vol = vol + p%of(id)%loc%heavy%now(i,j,k) * dv
+        if( .not. p%glb%inverse )then
+            rho = p%of(id)%loc%heavy%now(i,j,k) + p%glb%rho_12 * (1.0d0 - p%of(id)%loc%heavy%now(i,j,k))
+        else
+            rho = p%glb%rho_12 * p%of(id)%loc%heavy%now(i,j,k) + (1.0d0 - p%of(id)%loc%heavy%now(i,j,k))
+        endif
+        mass = mass + rho * p%of(id)%loc%heavy%now(i,j,k) * dv
     
     enddo
     enddo
@@ -115,16 +119,20 @@ p%glb%vol = vol
 
 mass = 0.0_8; vol=0.0_8
 
-!$omp parallel do private(i,j,k,rho), reduction(+:mass,vol)    
+!$omp parallel do private(i,j,k,rho,marker), reduction(+:mass,vol)    
 do id = 0, p%glb%threads-1
     
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke
     do j = p%of(id)%loc%js, p%of(id)%loc%je
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
         
-        rho = p%of(id)%loc%vof%now(i,j,k) + p%glb%rho_12 * (1.0d0-p%of(id)%loc%vof%now(i,j,k))
-        mass = mass + rho*p%of(id)%loc%vof%now(i,j,k)*dv
-        vol = vol + p%of(id)%loc%vof%now(i,j,k)*dv
+        vol = vol + p%of(id)%loc%vof%now(i,j,k) * dv
+        if( .not. p%glb%inverse )then
+            rho = p%of(id)%loc%vof%now(i,j,k) + p%glb%rho_12 * (1.0d0 - p%of(id)%loc%vof%now(i,j,k))
+        else
+            rho = p%glb%rho_12 * p%of(id)%loc%vof%now(i,j,k) + (1.0d0 - p%of(id)%loc%vof%now(i,j,k))
+        endif
+        mass = mass + rho * p%of(id)%loc%vof%now(i,j,k) * dv
     
     enddo
     enddo

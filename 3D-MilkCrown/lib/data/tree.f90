@@ -64,6 +64,7 @@ integer :: id, level
     write(*,'(A20,F15.4)')"Fr:",p%glb%fr
     write(*,'(A20,F10.4)')"Density ratio:",p%glb%rho_12
     write(*,'(A20,F10.4)')"Viscosity ratio:",p%glb%mu_12
+    write(*,'(A20,L5)')"Inverse Capturing:",p%glb%inverse
     write(*,'(A20,I5,A3,I5,A3,I5)')"Grids:",p%glb%node_x,"x",p%glb%node_y,"x",p%glb%node_z
     write(*,'(A20,I5,A3,I5,A3,I5)')"Threads Grid:",p%glb%grid_x,"x",p%glb%grid_y,"x",p%glb%grid_z
     write(*,'(A20,I5)')"Multigrid level:",p%glb%level
@@ -71,6 +72,7 @@ integer :: id, level
     write(*,'(A20,L5)')"X Periodic:",p%glb%xper
     write(*,'(A20,L5)')"Y Periodic:",p%glb%yper
     write(*,'(A20,L5)')"Z Periodic:",p%glb%zper
+
 
     ! write(*,*)" --- SubDomain Information  --- "
     ! do id = 0, p%glb%threads-1
@@ -98,7 +100,7 @@ subroutine manager_read(p,path)
 implicit none
 class(manager) :: p
 character(*) :: path
-integer :: x,y,z
+integer :: x,y,z,inverse
 
  open(unit=526,file=trim(path),status='old')
  
@@ -153,6 +155,8 @@ integer :: x,y,z
  read(526,*)
  read(526,*)p%glb%rho_12, p%glb%mu_12
  read(526,*)
+ read(526,*)inverse
+ read(526,*)
  read(526,*)p%glb%ubc(1), p%glb%ubc(2)
  read(526,*)
  read(526,*)p%glb%vbc(1), p%glb%vbc(2)
@@ -178,6 +182,12 @@ integer :: x,y,z
     p%glb%zper = .true.
  else
     p%glb%zper = .false.
+ endif
+
+ if( inverse == 1)then
+    p%glb%inverse = .true.
+ else
+    p%glb%inverse = .false.
  endif
  
 end subroutine

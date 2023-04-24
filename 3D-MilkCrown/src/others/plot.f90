@@ -48,6 +48,7 @@ do id = 0, p%glb%threads-1
                            
         E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
         E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'Phi', var = p%of(id)%loc%phi%now(nx1:nx2,ny1:ny2,nz1:nz2) )
+        ! E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'Rho', var = p%of(id)%loc%rho%now(nx1:nx2,ny1:ny2,nz1:nz2) )
         E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'VOF', var = p%of(id)%loc%vof%now(nx1:nx2,ny1:ny2,nz1:nz2) )
         E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'Velocity', varX = p%of(id)%loc%nvel%x%now(nx1:nx2,ny1:ny2,nz1:nz2),&
                                                             &varY = p%of(id)%loc%nvel%y%now(nx1:nx2,ny1:ny2,nz1:nz2),&
