@@ -239,11 +239,6 @@ do id = 0, p%glb%threads-1
     do j = p%of(id)%loc%js, p%of(id)%loc%je
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
 
-        px = px + p%of(id)%loc%heavy%now(i,j,k) * p%of(id)%loc%nvel%x%now(i,j,k) * dv
-        py = py + p%of(id)%loc%heavy%now(i,j,k) * p%of(id)%loc%nvel%y%now(i,j,k) * dv
-        pz = pz + p%of(id)%loc%heavy%now(i,j,k) * p%of(id)%loc%nvel%z%now(i,j,k) * dv
-        v = v + p%of(id)%loc%heavy%now(i,j,k) * dv
-
         ! Surface area
         if( abs(p%of(id)%loc%phi%now(i,j,k)) < p%glb%dx ) A = A + dv
 
@@ -252,6 +247,11 @@ do id = 0, p%glb%threads-1
         else
             marker = p%of(id)%loc%vof%now(i,j,k)
         endif
+
+        px = px + marker * p%of(id)%loc%nvel%x%now(i,j,k) * dv
+        py = py + marker * p%of(id)%loc%nvel%y%now(i,j,k) * dv
+        pz = pz + marker * p%of(id)%loc%nvel%z%now(i,j,k) * dv
+        v = v + marker * dv
 
         if( marker > 0.0 )then
 
