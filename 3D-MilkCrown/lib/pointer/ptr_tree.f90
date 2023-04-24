@@ -5,7 +5,7 @@ implicit none
 type ptr_family
 type(pointer_parent) :: phi, p, vof
 type(pointer_vector_parent) :: vel, nvel, nvel_old, velsrc_old, velsrc
-type(pointer_vector_parent) :: normals, vort
+type(pointer_vector_parent) :: normals!, vort
 type(pointer_vector_parent) :: tdatax, tdatay, tdataz
 type(pointer_mg_parent) :: mg
 contains 
@@ -34,7 +34,7 @@ integer :: idx,idy,idz,id,level
     call p%nvel_old%init(src,3)
     
     call p%normals%init(src,10)
-    call p%vort%init(src,3)
+    ! call p%vort%init(src,3)
         
     call p%tdatax%init(src,3)
     call p%tdatay%init(src,3)
@@ -61,9 +61,9 @@ integer :: idx,idy,idz,id,level
         p%vel%nodes(2)%of(idx,idy,idz)%dat => src%of(id)%loc%vel%y%now
         p%vel%nodes(3)%of(idx,idy,idz)%dat => src%of(id)%loc%vel%z%now
         
-        p%vort%nodes(1)%of(idx,idy,idz)%dat => src%of(id)%loc%vort%x%now
-        p%vort%nodes(2)%of(idx,idy,idz)%dat => src%of(id)%loc%vort%y%now
-        p%vort%nodes(3)%of(idx,idy,idz)%dat => src%of(id)%loc%vort%z%now
+        ! p%vort%nodes(1)%of(idx,idy,idz)%dat => src%of(id)%loc%vort%x%now
+        ! p%vort%nodes(2)%of(idx,idy,idz)%dat => src%of(id)%loc%vort%y%now
+        ! p%vort%nodes(3)%of(idx,idy,idz)%dat => src%of(id)%loc%vort%z%now
         
         p%velsrc%nodes(1)%of(idx,idy,idz)%dat => src%of(id)%loc%velsrc%x%now
         p%velsrc%nodes(2)%of(idx,idy,idz)%dat => src%of(id)%loc%velsrc%y%now
@@ -121,7 +121,7 @@ class(ptr_family) :: p
 real(8)  :: y
 
     y = p%phi%cputime + p%p%cputime + p%vof%cputime
-    y = y + p%vel%cputime + p%nvel%cputime + p%velsrc%cputime + p%velsrc_old%cputime + p%vort%cputime
+    y = y + p%vel%cputime + p%nvel%cputime + p%velsrc%cputime + p%velsrc_old%cputime! + p%vort%cputime
     y = y + p%normals%cputime 
     y = y + p%tdatax%cputime + p%tdatay%cputime + p%tdataz%cputime
 
@@ -135,7 +135,7 @@ class(ptr_family) :: p
     call p%p%reset
     call p%vof%reset
     call p%vel%reset
-    call p%vort%reset
+    ! call p%vort%reset
     call p%nvel%reset
     call p%velsrc%reset
     call p%velsrc_old%reset
