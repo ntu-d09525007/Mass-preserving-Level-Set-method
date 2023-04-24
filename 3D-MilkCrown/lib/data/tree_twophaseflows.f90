@@ -291,7 +291,7 @@ class(manager) :: p
 integer :: id,i,j,k
 real(8) :: fx,fxx,fy,fyy,fz,fzz,fxy,fxz,fyz
 
-call p%surface_norms
+call p%surface_norms2
 
 !$omp parallel do private(i,j,k,fx,fxx,fy,fyy,fz,fzz,fxy,fxz,fyz)
 do id = 0, p%glb%threads-1   
