@@ -211,7 +211,7 @@ implicit none
 integer :: i,j,k,id
 real(8) :: A, Q, lQ, Ke, lKe, dv, Po
 real(8) :: ux, uy, uz, vx, vy, vz, wx, wy, wz
-real(8) :: px, py, pz, v
+real(8) :: px, py, pz, v, marker
 
 call p%rho_mu
 
@@ -230,7 +230,7 @@ Q = 0.0
 v = 0.0
 
 !$omp parallel do reduction(+:A, Ke, Po, Q, px, py, pz, v), &
-!$omp& private(i, j, k, lq, lke, ux, uy, uz, vx, vy, vz, wx, wy, wz)
+!$omp& private(i, j, k, lq, lke, ux, uy, uz, vx, vy, vz, wx, wy, wz, marker)
 do id = 0, p%glb%threads-1
     
     !$omp parallel do collapse(3) reduction(+:A, Ke, Po, Q, px, py, pz, v) &
@@ -247,7 +247,13 @@ do id = 0, p%glb%threads-1
         ! Surface area
         if( abs(p%of(id)%loc%phi%now(i,j,k)) < p%glb%dx ) A = A + dv
 
-        if( p%of(id)%loc%heavy%now(i,j,k) > 0.0 )then
+        if( p%glb%method .ne. 3)then
+            marker = p%of(id)%loc%heavy%now(i,j,k)
+        else
+            marker = p%of(id)%loc%vof%now(i,j,k)
+        endif
+
+        if( marker > 0.0 )then
 
             ! Kinetic energy
             lke = p%of(id)%loc%nvel%x%now(i,j,k)**2 + p%of(id)%loc%nvel%y%now(i,j,k)**2 + p%of(id)%loc%nvel%z%now(i,j,k)**2
