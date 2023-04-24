@@ -28,7 +28,7 @@ implicit none
 
 !call level_set_symplectic_solver 
 call level_set_rk3_solver
-if(mod(p%glb%iter,5).eq.0)call level_set_rk3_redis(1,2.5d0*p%glb%dx)
+ if(mod(p%glb%iter,5).eq.0)call level_set_rk3_redis(1)
 call mass_preserving_level_set
 
 end subroutine
@@ -44,7 +44,7 @@ call level_set_rk3_solver
 if(mod(p%glb%iter,20).eq.0)then
     call clsvof_recon
 else if(mod(p%glb%iter,5).eq.0)then
-   call level_set_rk3_redis(1)
+    call level_set_rk3_redis(1)
 endif
 
 end subroutine

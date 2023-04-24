@@ -4,7 +4,7 @@ use branches
 implicit none
 
 type filemanager
-integer :: ls_mv, damdata, wave
+integer :: mass, vol, energy, momentum
 end type filemanager
 
 type multigrid
@@ -53,7 +53,8 @@ integer :: id, level
 
     write(*,*)" --- Problem information --- "
     write(*,'(A30,I5)')"Number of computing threads:",p%glb%threads
-    write(*,'(A20)')p%glb%name
+    write(*,'(A30,I5)')"Threads for nested OpenMP:", p%glb%nthreads
+    write(*,'(A30)')p%glb%name
     write(*,'(A20,F15.8)')"dx:",p%glb%dx
     write(*,'(A20,F15.8)')"dy:",p%glb%dy
     write(*,'(A20,F15.8)')"dz:",p%glb%dz
@@ -192,13 +193,21 @@ real(8) :: kh,ap
 
     write(*,*)"finish read data from file"
     
-    p%fil%ls_mv = 15
-    open(unit=p%fil%ls_mv,file="./out/"//trim(p%glb%name)//"_MVloss.plt")
-    write(p%fil%ls_mv,*)'variables = "T" "Loss of mass" "Loss of Volume" '
+    p%fil%mass = 15
+    open(unit=p%fil%mass,file="./out/"//trim(p%glb%name)//"_MassLoss.plt")
+    write(p%fil%mass,*)'variables = "T" "LS" "VOF" '
 
-    ! p%fil%damdata = 16
-    ! open(unit=p%fil%damdata,file="./out/"//trim(p%glb%name)//"_DamData.plt")
-    ! write(p%fil%damdata,*)'variables = "T" "Damfront" "Wall" '
+    p%fil%vol = 16
+    open(unit=p%fil%vol,file="./out/"//trim(p%glb%name)//"_VolumeLoss.plt")
+    write(p%fil%vol,*)'variables = "T" "LS" "VOF" '
+
+    p%fil%energy = 17
+    open(unit=p%fil%energy,file="./out/"//trim(p%glb%name)//"_Energy.plt")
+    write(p%fil%energy,*)'variables = "T" "Ek" "Ep" "Es" "Ev" "E" "E0" '
+
+    p%fil%momentum = 18
+    open(unit=p%fil%momentum,file="./out/"//trim(p%glb%name)//"_Momentum.plt")
+    write(p%fil%momentum,*)'variables = "T" "Px" "Py" "Pz" '
 
     p%glb%threads = p%glb%grid_x * p%glb%grid_y * p%glb%grid_z
     
@@ -206,7 +215,8 @@ real(8) :: kh,ap
 
     call omp_set_dynamic(.false.)
     call omp_set_nested(.true.)
-    call omp_set_num_threads(min(omp_get_max_threads(),p%glb%threads))
+    call omp_set_max_active_levels(p%glb%nthreads)
+    call omp_set_num_threads(min(omp_get_max_threads(),p%glb%threads * p%glb%nthreads))
 
     write(*,*)"finish allocating nmumber of jobs"
     
@@ -295,6 +305,8 @@ real(8) :: kh,ap
         p%glb%we = p%glb%rho_1 * p%glb%u**2.0d0 * p%glb%L / p%glb%sigma
         p%glb%fr = p%glb%u**2.0d0 / ( p%glb%g * p%glb%L ) 
     endif
+
+    p%glb%energy_unit = p%glb%rho_1 * p%glb%g * p%glb%L**4.0
 
     write(*,*)"finish calculating problem parameters"
     

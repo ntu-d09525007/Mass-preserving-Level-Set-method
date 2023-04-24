@@ -11,7 +11,20 @@ if( p%glb%iter == 1)then
 endif
 
 ! level set method, loss of volume/mass in percentage
-write(p%fil%ls_mv,*)p%glb%time,100.0d0*(p%glb%imass-p%glb%mass)/p%glb%imass,100.0d0*(p%glb%ivol-p%glb%vol)/p%glb%ivol
+write(p%fil%mass,*)p%glb%time,100.0d0*(p%glb%imass-p%glb%mass)/p%glb%imass,100.0d0*(p%glb%imassv-p%glb%massv)/p%glb%imassv
+write(p%fil%vol,*)p%glb%time,100.0d0*(p%glb%ivol-p%glb%vol)/p%glb%ivol,100.0d0*(p%glb%ivolv-p%glb%volv)/p%glb%ivolv
+
+p%glb%loss_mass_avg = p%glb%loss_mass_avg + abs(p%glb%imass-p%glb%mass)/p%glb%imass
+p%glb%loss_vol_avg = p%glb%loss_vol_avg + abs(p%glb%ivol-p%glb%vol)/p%glb%ivol
+
+p%glb%loss_mass_max = max(p%glb%loss_mass_max, abs(p%glb%imass-p%glb%mass)/p%glb%imass)
+p%glb%loss_vol_max = max(p%glb%loss_vol_max, abs(p%glb%ivol-p%glb%vol)/p%glb%ivol)
+
+p%glb%loss_mass_avgv = p%glb%loss_mass_avgv + abs(p%glb%imassv-p%glb%massv)/p%glb%imassv
+p%glb%loss_vol_avgv = p%glb%loss_vol_avgv + abs(p%glb%ivolv-p%glb%volv)/p%glb%ivolv
+
+p%glb%loss_mass_maxv = max(p%glb%loss_mass_maxv, abs(p%glb%imassv-p%glb%massv)/p%glb%imassv)
+p%glb%loss_vol_maxv = max(p%glb%loss_vol_maxv, abs(p%glb%ivolv-p%glb%volv)/p%glb%ivolv)
 
 ! !Drybed 
 ! damfront = 0.0d0; damh=0.0d0
@@ -96,3 +109,69 @@ real(8) :: total, totald
         write(*,*)''
         write(*,'(A18,F17.2,"%")')"Data Sync:",totald/total*100.0d0
 end subroutine
+
+subroutine calculate_interface_loss()
+use all
+implicit none
+integer :: id,i,j,k
+real(8) :: tgt, src
+real(8) :: error, errorv
+
+call p%ls_mv
+
+!$omp parallel do private(i,j,k,src,tgt) reduction(+:error, errorv)
+do id = 0, p%glb%threads-1
+    
+    !$omp parallel do collapse(3) private(i,j,k,src,tgt) reduction(+:error, errorv)
+    do k = p%of(id)%loc%ks, p%of(id)%loc%ke
+    do j = p%of(id)%loc%js, p%of(id)%loc%je
+    do i = p%of(id)%loc%is, p%of(id)%loc%ie
+
+        !level-set
+        src = heavyside(p%of(id)%loc%phi%tmp2(i,j,k) / p%glb%ls_wid)
+        tgt = heavyside(p%of(id)%loc%phi%now(i,j,k)  / p%glb%ls_wid)
+
+        error = error + abs(src-tgt)
+
+        !vof
+        src = p%of(id)%loc%vof%tmp2(i,j,k)
+        tgt = p%of(id)%loc%phi%now(i,j,k)
+
+        errorv = errorv + abs(src-tgt)
+
+    enddo
+    enddo
+    enddo
+    !$omp end parallel do
+
+enddo
+!$omp end parallel do
+
+if(p%glb%method == 3)then
+    write(*,'(A10, 2ES15.4)')"VOF Mass:", p%glb%loss_mass_avg / p%glb%iter, p%glb%loss_mass_max
+    write(*,'(A10, 2ES15.4)')"VOF Vol:", p%glb%loss_vol_avg / p%glb%iter, p%glb%loss_vol_max
+    write(*,'(A10, 2ES15.4)')"VOF Int:", errorv / p%glb%node_x / p%glb%node_y / p%glb%node_z
+else
+    write(*,'(A10, 2ES15.4)')"LS Mass:", p%glb%loss_mass_avg / p%glb%iter, p%glb%loss_mass_max
+    write(*,'(A10, 2ES15.4)')"LS Vol:", p%glb%loss_vol_avg / p%glb%iter, p%glb%loss_vol_max
+    write(*,'(A10, 2ES15.4)')"LS Int:", error / p%glb%node_x / p%glb%node_y / p%glb%node_z
+endif
+
+end subroutine
+
+function heavyside(x)
+implicit none
+real(8) :: x, heavyside, eps, pi
+
+eps = 1.0d-12
+pi = dacos(-1.0d0)
+
+if( x > 1.0d0 - eps)then
+    heavyside = 1.0
+else if( x < -1.0 + eps)then
+    heavyside = 0.0
+else
+    heavyside = 0.5d0 * (1.0d0 + x + dsin(pi*x) / pi )
+endif
+
+end function

@@ -4,6 +4,7 @@ use all
 implicit none
 integer :: i,j,k,id
 integer(8) :: cpustart, cpuend
+real(8) :: src
 
     call system_clock(cpustart)
     
@@ -12,14 +13,16 @@ integer(8) :: cpustart, cpuend
     !---------------------------
     call level_set_rk3_source
 
-    !$omp parallel do private(i,j,k)
+    !$omp parallel do private(i,j,k,src)
     do id = 0, p%glb%threads-1
 
-        !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
+        !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k,src)
         do k = p%of(id)%loc%ks, p%of(id)%loc%ke
         do j = p%of(id)%loc%js, p%of(id)%loc%je
         do i = p%of(id)%loc%is, p%of(id)%loc%ie
-            p%of(id)%loc%phi%now(i,j,k) = p%of(id)%loc%phi%now(i,j,k) + p%of(id)%loc%phi%tmp(i,j,k) * p%glb%dt
+            p%of(id)%loc%tdata%x%l1(i,j,k) = p%of(id)%loc%phi%tmp(i,j,k)
+            src = p%of(id)%loc%tdata%x%l1(i,j,k)
+            p%of(id)%loc%phi%now(i,j,k) = p%of(id)%loc%phi%now(i,j,k) + src * p%glb%dt
         end do 
         end do
         end do
@@ -37,15 +40,16 @@ integer(8) :: cpustart, cpuend
     !---------------------------
     call level_set_rk3_source
 
-    !$omp parallel do private(i,j,k)
+    !$omp parallel do private(i,j,k,src)
     do id = 0, p%glb%threads-1
 
-        !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
+        !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k,src)
         do k = p%of(id)%loc%ks, p%of(id)%loc%ke
         do j = p%of(id)%loc%js, p%of(id)%loc%je
         do i = p%of(id)%loc%is, p%of(id)%loc%ie
-            p%of(id)%loc%phi%now(i,j,k) = p%of(id)%loc%phi%now(i,j,k) + p%of(id)%loc%phi%tmp(i,j,k) * p%glb%dt
-            p%of(id)%loc%phi%now(i,j,k) = ( p%of(id)%loc%phi%now(i,j,k) + 3.0d0*p%of(id)%loc%phi%old(i,j,k) ) / 4.0d0
+            p%of(id)%loc%tdata%x%l2(i,j,k) = p%of(id)%loc%phi%tmp(i,j,k)
+            src = ( -3.0d0*p%of(id)%loc%tdata%x%l1(i,j,k)+p%of(id)%loc%tdata%x%l2(i,j,k) ) / 4.0d0
+            p%of(id)%loc%phi%now(i,j,k) = p%of(id)%loc%phi%now(i,j,k) + src * p%glb%dt
         end do 
         end do
         end do
@@ -63,15 +67,16 @@ integer(8) :: cpustart, cpuend
     !---------------------------
     call level_set_rk3_source
 
-    !$omp parallel do private(i,j,k)
+    !$omp parallel do private(i,j,k,src)
     do id = 0, p%glb%threads-1
 
-        !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
+        !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k,src)
         do k = p%of(id)%loc%ks, p%of(id)%loc%ke
         do j = p%of(id)%loc%js, p%of(id)%loc%je
         do i = p%of(id)%loc%is, p%of(id)%loc%ie
-            p%of(id)%loc%phi%now(i,j,k) = p%of(id)%loc%phi%now(i,j,k) + p%of(id)%loc%phi%tmp(i,j,k) * p%glb%dt
-            p%of(id)%loc%phi%now(i,j,k) = ( 2.0d0*p%of(id)%loc%phi%now(i,j,k) + p%of(id)%loc%phi%old(i,j,k) ) / 3.0d0
+            p%of(id)%loc%tdata%x%l3(i,j,k) = p%of(id)%loc%phi%tmp(i,j,k)
+            src = ( -p%of(id)%loc%tdata%x%l1(i,j,k)-p%of(id)%loc%tdata%x%l2(i,j,k)+8.0d0*p%of(id)%loc%tdata%x%l3(i,j,k) ) / 12.0d0
+            p%of(id)%loc%phi%now(i,j,k) = p%of(id)%loc%phi%now(i,j,k) + src * p%glb%dt
         end do 
         end do
         end do
@@ -116,8 +121,8 @@ do id = 0, p%glb%threads-1
         p%of(id)%loc%tdata%y%s1(i,j,k) = 0.5d0*(p%of(id)%loc%nvel%y%old(i,j,k)+abs(p%of(id)%loc%nvel%y%old(i,j,k)))*p%of(id)%loc%phi%now(i,j,k)
         p%of(id)%loc%tdata%y%s2(i,j,k) = 0.5d0*(p%of(id)%loc%nvel%y%old(i,j,k)-abs(p%of(id)%loc%nvel%y%old(i,j,k)))*p%of(id)%loc%phi%now(i,j,k)
 
-        p%of(id)%loc%tdata%z%s1(i,j,k) = 0.5d0*(p%of(id)%loc%nvel%y%old(i,j,k)+abs(p%of(id)%loc%nvel%z%old(i,j,k)))*p%of(id)%loc%phi%now(i,j,k)
-        p%of(id)%loc%tdata%z%s2(i,j,k) = 0.5d0*(p%of(id)%loc%nvel%y%old(i,j,k)-abs(p%of(id)%loc%nvel%z%old(i,j,k)))*p%of(id)%loc%phi%now(i,j,k)
+        p%of(id)%loc%tdata%z%s1(i,j,k) = 0.5d0*(p%of(id)%loc%nvel%z%old(i,j,k)+abs(p%of(id)%loc%nvel%z%old(i,j,k)))*p%of(id)%loc%phi%now(i,j,k)
+        p%of(id)%loc%tdata%z%s2(i,j,k) = 0.5d0*(p%of(id)%loc%nvel%z%old(i,j,k)-abs(p%of(id)%loc%nvel%z%old(i,j,k)))*p%of(id)%loc%phi%now(i,j,k)
 
     end do
     end do 
@@ -138,6 +143,7 @@ call pt%tdataz%sync
 !$omp parallel do private(i,j,k)
 do id = 0, p%glb%threads-1
 
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(k,j)
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke
     do j = p%of(id)%loc%js, p%of(id)%loc%je
         call crweno_flux_split(p%of(id)%loc%tdata%x%s2(:,j,k),p%of(id)%loc%tdata%x%s1(:,j,k),&
@@ -145,7 +151,9 @@ do id = 0, p%glb%threads-1
                                p%of(id)%loc%is,p%of(id)%loc%ie,p%of(id)%glb%ghc)
     end do 
     end do
+    !$omp end parallel do
     
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(k,i)
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
         call crweno_flux_split(p%of(id)%loc%tdata%y%s2(i,:,k),p%of(id)%loc%tdata%y%s1(i,:,k),&
@@ -153,7 +161,9 @@ do id = 0, p%glb%threads-1
                                p%of(id)%loc%js,p%of(id)%loc%je,p%of(id)%glb%ghc)
     end do
     end do
+    !$omp end parallel do
     
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(i,j)
     do j = p%of(id)%loc%js, p%of(id)%loc%je
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
         call crweno_flux_split(p%of(id)%loc%tdata%z%s2(i,j,:),p%of(id)%loc%tdata%z%s1(i,j,:),&
@@ -161,6 +171,7 @@ do id = 0, p%glb%threads-1
                                p%of(id)%loc%ks,p%of(id)%loc%ke,p%of(id)%glb%ghc)
     end do
     end do
+    !$omp end parallel do
 
     !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
     do k = p%of(id)%loc%ks-p%glb%ghc, p%of(id)%loc%ke+p%glb%ghc

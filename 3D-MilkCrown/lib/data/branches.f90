@@ -6,7 +6,7 @@ use mutligrid_root
 implicit none
 
 type global
-character(20) :: name
+character(30) :: name
 integer :: level
 integer :: method
 integer :: how_to_paras
@@ -22,13 +22,20 @@ real(8) :: time, t2s, t2p ! time to stop/plot
 real(8) :: dx, dy, dz, dt, rdt
 real(8) :: mass, vol, imass, ivol
 real(8) :: massv, volv, imassv, ivolv
+real(8) :: loss_mass_avg, loss_mass_avgv
+real(8) :: loss_mass_max, loss_mass_maxv
+real(8) :: loss_vol_avg, loss_vol_avgv
+real(8) :: loss_vol_max, loss_vol_maxv
+real(8) :: loss_int, loss_intv
+real(8) :: Ek, Ep, Es, Ev, Ek0, Ep0, Es0, energy_unit
+real(8) :: px, py, pz
 real(8) :: re, we, fr
 real(8) :: t_w, t_tol
 real(8) :: p_w1, p_w2, p_tol, p_b
 REAL(8) :: ls_wid
 real(8) :: L, T, U ! characteristic length, time, velocity
 real(8) :: G, sigma ! gravity, surface tension
-real(8) :: gx,gy,gz
+real(8) :: gx, gy, gz
 real(8) :: mu_1, mu_2, rho_1, rho_2
 real(8) :: mu_12, rho_12
 real(8) :: red_error
@@ -49,11 +56,11 @@ type(time_recorded) :: phi, p, rho, mu, vof
 type(time_recorded_derivatives) :: normals
 type(time_recorded_vec) :: vel, nvel, velsrc
 !-------------------------------------------
-type(time_recorded_vec) :: vort, lamb
-type(time_recorded_vec) :: vort_adv, vort_tws, vort_baro, vort_visc
-type(time_recorded) :: q_cri, omega_cri, lamb_div
+! type(time_recorded_vec) :: vort, lamb
+! type(time_recorded_vec) :: vort_adv, vort_tws, vort_baro, vort_visc
+! type(time_recorded) :: q_cri, omega_cri, lamb_div
 !-------------------------------------------
-type(tensor) :: vel_ten, vor_ten, p_ten, rho_ten
+type(tensor) :: vel_ten!, vor_ten, p_ten, rho_ten
 !-------------------------------------------
 type(tsolver_data) :: tdata
 type(ccd_manager) :: ccdsolvers
@@ -149,25 +156,25 @@ CALL P%LOC%tdata%ALLOC(IS,IE,JS,JE,KS,KE,P%GLB%DT,P%GLB%t_w,P%GLB%GHC)
 CALL P%LOC%ccdsolvers%init(IS,IE,JS,JE,KS,KE,P%GLB%DX,P%GLB%DY,P%GLB%DZ,P%GLB%DT)
 
 ! vortex identification
-call p%loc%vort%alloc(is,ie,js,je,ks,ke)
-call p%loc%lamb%alloc(is,ie,js,je,ks,ke)
+! call p%loc%vort%alloc(is,ie,js,je,ks,ke)
+! call p%loc%lamb%alloc(is,ie,js,je,ks,ke)
 
-call p%loc%q_cri%alloc(is,ie,js,je,ks,ke)
-call p%loc%omega_cri%alloc(is,ie,js,je,ks,ke)
+! call p%loc%q_cri%alloc(is,ie,js,je,ks,ke)
+! call p%loc%omega_cri%alloc(is,ie,js,je,ks,ke)
 
-call p%loc%lamb_div%alloc(is,ie,js,je,ks,ke)
+! call p%loc%lamb_div%alloc(is,ie,js,je,ks,ke)
 
 !tensor
 call p%loc%vel_ten%alloc(3,is,ie,js,je,ks,ke)
-call p%loc%vor_ten%alloc(3,is,ie,js,je,ks,ke)
-call p%loc%p_ten%alloc(1,is,ie,js,je,ks,ke)
-call p%loc%rho_ten%alloc(1,is,ie,js,je,ks,ke)
+! call p%loc%vor_ten%alloc(3,is,ie,js,je,ks,ke)
+! call p%loc%p_ten%alloc(1,is,ie,js,je,ks,ke)
+! call p%loc%rho_ten%alloc(1,is,ie,js,je,ks,ke)
 
 !vorticity production
-call p%loc%vort_adv%alloc(is,ie,js,je,ks,ke)
-call p%loc%vort_tws%alloc(is,ie,js,je,ks,ke)
-call p%loc%vort_baro%alloc(is,ie,js,je,ks,ke)
-call p%loc%vort_visc%alloc(is,ie,js,je,ks,ke)
+! call p%loc%vort_adv%alloc(is,ie,js,je,ks,ke)
+! call p%loc%vort_tws%alloc(is,ie,js,je,ks,ke)
+! call p%loc%vort_baro%alloc(is,ie,js,je,ks,ke)
+! call p%loc%vort_visc%alloc(is,ie,js,je,ks,ke)
 
 if( p%glb%level>0 )then
 

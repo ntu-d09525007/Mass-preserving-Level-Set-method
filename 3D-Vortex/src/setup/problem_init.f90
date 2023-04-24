@@ -96,13 +96,6 @@ CHARACTER(100) :: NAME_OF_FILE
 
     ! call ns_ab_setup
 
-    call p%ls_mv
-    p%glb%ivol = p%glb%vol
-    p%glb%imass = p%glb%mass
-    p%glb%ivolv = p%glb%volv
-    p%glb%imassv = p%glb%massv
-    call p%sync
-
     write(*,*) "plotting"
     call plot
     write(*,*) "plot finished"
@@ -128,5 +121,12 @@ CHARACTER(100) :: NAME_OF_FILE
 
     p%glb%iter = 0
     p%glb%time = 0.0d0
+
+    call p%ls_mv
+    p%glb%ivol = p%glb%vol
+    p%glb%imass = p%glb%mass
+    p%glb%ivolv = p%glb%volv
+    p%glb%imassv = p%glb%massv
+    call p%sync
 
 end subroutine

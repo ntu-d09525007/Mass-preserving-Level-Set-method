@@ -103,13 +103,6 @@ CHARACTER(100) :: NAME_OF_FILE
 
     call ns_ab_setup
 
-    call p%ls_mv
-    p%glb%ivol = p%glb%vol
-    p%glb%imass = p%glb%mass
-    p%glb%ivolv = p%glb%volv
-    p%glb%imassv = p%glb%massv
-    call p%sync
-
     write(*,*) "plotting"
     call plot
     write(*,*) "plot finished"
@@ -121,7 +114,28 @@ CHARACTER(100) :: NAME_OF_FILE
     p%glb%syn    = 0.0d0
     p%glb%red_error = 0.0d0
 
+    p%glb%loss_mass_avg = 0.0d0
+    p%glb%loss_mass_max = 0.0d0
+    p%glb%loss_vol_avg = 0.0d0
+    p%glb%loss_vol_max = 0.0d0
+    p%glb%loss_int = 0.0d0
+
+    p%glb%loss_mass_avgv = 0.0d0
+    p%glb%loss_mass_maxv = 0.0d0
+    p%glb%loss_vol_avgv = 0.0d0
+    p%glb%loss_vol_maxv = 0.0d0
+    p%glb%loss_intv = 0.0d0
+
     p%glb%iter = 0
     p%glb%time = 0.0d0
+
+    p%glb%Ev = -1.0d0
+
+    call p%ls_mv
+    p%glb%ivol = p%glb%vol
+    p%glb%imass = p%glb%mass
+    p%glb%ivolv = p%glb%volv
+    p%glb%imassv = p%glb%massv
+    call p%sync
 
 end subroutine

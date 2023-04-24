@@ -16,7 +16,7 @@ call problem_init
 do 
     
     if( p%glb%time + p%glb%dt > p%glb%t2s )then
-        p%glb%dt = p%glb%t2s - p%glb%time
+        p%glb%dt = p%glb%t2s - p%glb%time + 1.0d-10
     endif
     
     p%glb%time = p%glb%time + p%glb%dt 

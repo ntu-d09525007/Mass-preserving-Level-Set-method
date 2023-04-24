@@ -17,7 +17,7 @@ ooo	Range of domain in X direction
 ooo	Range of domain in Y direction
 -3.0		3.0
 ooo	Range of domain in Z direction
-0.0			6.0
+0.0		6.0
 ooo	Time to stop / plot
 50.0		0.1
 ooo	Crount number ( advection / redistance )

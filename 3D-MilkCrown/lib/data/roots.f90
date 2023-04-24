@@ -10,7 +10,7 @@ end type dum_matrices
 
 type time_recorded
 integer :: is, ie, js ,je, ks, ke
-real(8),dimension(:,:,:),allocatable :: now, old, old2, tmp
+real(8),dimension(:,:,:),allocatable :: now, old, old2, tmp, tmp2
 contains
 procedure alloc => time_recorded_alloc
 procedure init => time_recorded_init
@@ -102,7 +102,8 @@ p%is = is; p%ie = ie
 p%js = js; p%je = je
 p%ks = ks; p%ke = ke 
 
-allocate( p%now(is:ie,js:je,ks:ke), p%old(is:ie,js:je,ks:ke), p%old2(is:ie,js:je,ks:ke), p%tmp(is:ie,js:je,ks:ke) )
+allocate( p%now(is:ie,js:je,ks:ke), p%old(is:ie,js:je,ks:ke), p%old2(is:ie,js:je,ks:ke), &
+         &p%tmp(is:ie,js:je,ks:ke), p%tmp2(is:ie,js:je,ks:ke) )
 
 end subroutine
 
@@ -157,6 +158,7 @@ class(time_recorded) :: p
     p%old(i,j,k) = p%now(i,j,k)
     p%old2(i,j,k) = p%now(i,j,k)
     p%tmp(i,j,k) = p%now(i,j,k)
+    p%tmp2(i,j,k) = p%now(i,j,k)
  end do
  end do 
  end do

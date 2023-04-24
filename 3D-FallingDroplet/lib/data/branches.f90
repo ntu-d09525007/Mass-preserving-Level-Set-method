@@ -6,7 +6,7 @@ use mutligrid_root
 implicit none
 
 type global
-character(20) :: name
+character(30) :: name
 integer :: level
 integer :: method
 integer :: how_to_paras
@@ -22,6 +22,11 @@ real(8) :: time, t2s, t2p ! time to stop/plot
 real(8) :: dx, dy, dz, dt, rdt
 real(8) :: mass, vol, imass, ivol
 real(8) :: massv, volv, imassv, ivolv
+real(8) :: loss_mass_avg, loss_mass_avgv
+real(8) :: loss_mass_max, loss_mass_maxv
+real(8) :: loss_vol_avg, loss_vol_avgv
+real(8) :: loss_vol_max, loss_vol_maxv
+real(8) :: loss_int, loss_intv
 real(8) :: re, we, fr
 real(8) :: t_w, t_tol
 real(8) :: p_w1, p_w2, p_tol, p_b

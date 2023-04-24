@@ -5,11 +5,10 @@ implicit none
 integer :: i,j,k,id,iter
 real(8) :: lam, plam
 
-call p%curv()
-call pt%normals%sync
-
-do iter = 1, 20
+do iter = 1, 2
     
+    call p%surface_norms2
+    call pt%normals%sync
     call p%ls_mv()
     
     lam = 0.0_8
@@ -44,7 +43,8 @@ do iter = 1, 20
 
     !$omp parallel do private(i,j,k)
     do id = 0, p%glb%threads-1
-        !$omp parallel do num_threads(p%glb%nthreads) collapse(3)
+
+        !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
         do k = p%of(id)%loc%ks, p%of(id)%loc%ke
         do j = p%of(id)%loc%js, p%of(id)%loc%je
         do i = p%of(id)%loc%is, p%of(id)%loc%ie
@@ -55,6 +55,7 @@ do iter = 1, 20
         end do
         end do
         !$omp end parallel do
+        
         call p%of(id)%bc(0,p%of(id)%loc%phi%now)
     
     enddo   

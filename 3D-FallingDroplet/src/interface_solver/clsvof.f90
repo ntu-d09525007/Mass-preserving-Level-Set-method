@@ -10,7 +10,7 @@ integer(8) :: cpustart, cpuend
 
     eps = 1.0d-10
 
-    call p%surface_norms2
+    call p%surface_norms
     call pt%normals%sync
 
     ! x direction 
