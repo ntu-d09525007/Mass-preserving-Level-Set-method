@@ -12,6 +12,7 @@ integer :: method
 integer :: how_to_paras
 integer :: grid_x, grid_y, grid_z, threads, nthreads ! numbers of CPUs 
 integer :: node_x, node_y, node_z
+integer :: num_of_plots
 integer :: ug ! grid per unit length
 integer :: ghc ! ghost cell
 integer :: ubc(2), vbc(2), wbc(2)

@@ -111,6 +111,8 @@ integer :: x,y,z
  read(526,*)
  read(526,*)p%glb%nthreads
  read(526,*)
+ read(526,*)p%glb%num_of_plots
+ read(526,*)
  read(526,*)p%glb%level
  read(526,*)
  read(526,*)p%glb%ug

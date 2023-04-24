@@ -6,10 +6,12 @@ ooo	Dimension of threads grid in X, Y, Z direction
 3 	3 	3
 ooo Nested OpenMP threads
 1
+ooo Domain splits for plotting (Increase if stack-overflow)
+2
 ooo	Multigrid level
-7
+5
 ooo	Cells per unit length 
-32
+16
 ooo	Number of ghost cell
 3
 ooo	Range of domain in X direction
@@ -17,7 +19,7 @@ ooo	Range of domain in X direction
 ooo	Range of domain in Y direction
 -3.0		3.0
 ooo	Range of domain in Z direction
-0.0		6.0
+0.0			6.0
 ooo	Time to stop / plot
 25.0		0.1
 ooo	Crount number ( advection / redistance )
