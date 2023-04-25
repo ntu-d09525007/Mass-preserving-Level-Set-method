@@ -96,8 +96,8 @@ end subroutine
 subroutine level_set_rk3_source()
 implicit none
 
-call level_set_rk3_source_weno
-!call level_set_rk3_source_ccd
+! call level_set_rk3_source_weno
+call level_set_rk3_source_ccd
 
 end subroutine
 
