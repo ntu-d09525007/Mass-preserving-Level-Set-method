@@ -369,10 +369,6 @@ real(8) :: kh,ap
         call p%mg_setup
         write(*,*)"finish initializing multigrid exact solver"
     endif
-
-    if( p%glb%inverse )then
-        p%glb%btn_sf = - p%glb%btn_sf
-    endif
     
 end subroutine
 
