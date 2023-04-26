@@ -15,8 +15,6 @@ do id = 0, p%glb%threads-1
     do i = p%of(id)%loc%is-p%glb%ghc, p%of(id)%loc%ie+p%glb%ghc
     
         x = p%of(id)%loc%phi%now(i,j,k) / p%glb%ls_wid
-
-        if( p%glb%inverse ) x = -x 
         
         if( x > 1.0_8-eps )then
             heavy = 1.0_8
@@ -59,7 +57,10 @@ do id = 0, p%glb%threads-1
     do j = p%of(id)%loc%js-p%glb%ghc, p%of(id)%loc%je+p%glb%ghc
     do i = p%of(id)%loc%is-p%glb%ghc, p%of(id)%loc%ie+p%glb%ghc
         
-        heavy = p%of(id)%loc%heavy%now(i,j,k)
+        heavy = p%of(id)%loc%vof%now(i,j,k)
+        if( p%glb%method .ne. 3)heavy = p%of(id)%loc%heavy%now(i,j,k)
+
+        if( p%glb%inverse ) heavy = 1.0d0 - heavy
         
         p%of(id)%loc%rho%now(i,j,k) = heavy + p%glb%rho_12 * (1.0_8 - heavy )
         p%of(id)%loc%mu%now(i,j,k)  = heavy + p%glb%mu_12  * (1.0_8 - heavy )
@@ -83,7 +84,7 @@ real(8) :: dv, marker
 
 dv = p%glb%dx * p%glb%dy * p%glb%dz
 
-call p%rho_mu
+call p%ls_funs
 
 !===========================  LS 
 
@@ -97,7 +98,11 @@ do id = 0, p%glb%threads-1
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
         
         vol = vol + p%of(id)%loc%heavy%now(i,j,k) * dv
-        rho = p%of(id)%loc%rho%now(i,j,k) 
+        if( .not. p%glb%inverse )then
+            rho = p%of(id)%loc%heavy%now(i,j,k) + p%glb%rho_12 * (1.0d0 - p%of(id)%loc%heavy%now(i,j,k))
+        else
+            rho = p%glb%rho_12 * p%of(id)%loc%heavy%now(i,j,k) + (1.0d0 - p%of(id)%loc%heavy%now(i,j,k))
+        endif
         mass = mass + rho * p%of(id)%loc%heavy%now(i,j,k) * dv
     
     enddo
@@ -122,7 +127,11 @@ do id = 0, p%glb%threads-1
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
         
         vol = vol + p%of(id)%loc%vof%now(i,j,k) * dv
-        rho = p%of(id)%loc%rho%now(i,j,k) 
+        if( .not. p%glb%inverse )then
+            rho = p%of(id)%loc%vof%now(i,j,k) + p%glb%rho_12 * (1.0d0 - p%of(id)%loc%vof%now(i,j,k))
+        else
+            rho = p%glb%rho_12 * p%of(id)%loc%vof%now(i,j,k) + (1.0d0 - p%of(id)%loc%vof%now(i,j,k))
+        endif
         mass = mass + rho * p%of(id)%loc%vof%now(i,j,k) * dv
     
     enddo

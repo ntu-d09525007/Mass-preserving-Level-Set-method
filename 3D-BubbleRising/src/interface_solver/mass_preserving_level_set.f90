@@ -28,7 +28,11 @@ do iter = 1, 20
             
             plam =  p%of(id)%loc%delta%now(i,j,k)**2.0_8 * p%of(id)%loc%grad%now(i,j,k) 
             
-            plam = plam * ( 2.0d0*(p%glb%rho_12-1.0d0)*p%of(id)%loc%heavy%now(i,j,k) + 1.0d0 )*p%glb%dx*p%glb%dy*p%glb%dz
+            if( p%glb%inverse )then
+                plam = plam * ( 2.0d0*(p%glb%rho_12-1.0d0)*p%of(id)%loc%heavy%now(i,j,k) + 1.0d0 )*p%glb%dx*p%glb%dy*p%glb%dz
+            else
+                plam = plam * ( 2.0d0*(1.0d0-p%glb%rho_12)*p%of(id)%loc%heavy%now(i,j,k) + p%glb%rho_12 )*p%glb%dx*p%glb%dy*p%glb%dz
+            endif
 
             lam = lam + plam
             
@@ -41,7 +45,6 @@ do iter = 1, 20
     !$omp end parallel do
     
     lam = ( p%glb%imass - p%glb%mass ) / lam
-    if( p%glb%inverse ) lam = - lam
 
     !$omp parallel do private(i,j,k)
     do id = 0, p%glb%threads-1
