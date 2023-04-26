@@ -1,7 +1,7 @@
 ooo	Method to capture interface ( LS / MPLS / CLSVOF ) 
 2
 ooo	Name of the problem 
-BubbleRising
+BubbleRising_16
 ooo	Dimension of threads grid in X, Y, Z direction
 2 		2 		4
 ooo Nested OpenMP threads
@@ -21,7 +21,7 @@ ooo	Range of domain in Y direction
 ooo	Range of domain in Z direction
 0.0			8.0
 ooo	Time to stop / plot
-10.0		    0.1
+10.0		0.1
 ooo	Crount number ( advection / redistance )
 0.01		0.25
 ooo	PPE iteration ( tolerance / w1 / w2 / valve )
@@ -33,11 +33,11 @@ ooo	Level set interface width
 ooo	Problem parameters ( Prescribed / L / L+U / L+T / U+T / Wave study )
 1
 ooo	Density / Viscosity of fluid 1 ( phi > 0 )
-1000.0 		0.0017
+995.0 		0.0007972
 ooo	Density / Viscosity of fluid 2 ( phi < 0 )
-1.25		0.000001
+1.17		0.00001846
 ooo	Surface tension of fluid 1, 2 / Using ?
-0.05		1
+0.078		1
 ooo	Gravity / Using ?
 9.81		1
 ooo	Gravity direction ( no need normalize)

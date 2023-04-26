@@ -4,7 +4,7 @@ use branches
 implicit none
 
 type filemanager
-integer :: mass, vol, energy, momentum
+integer :: mass, vol, energy, momentum, position
 end type filemanager
 
 type multigrid
@@ -62,6 +62,7 @@ integer :: id, level
     write(*,'(A20,F15.4)')"Re:",p%glb%re
     write(*,'(A20,F15.4)')"We:",p%glb%we
     write(*,'(A20,F15.4)')"Fr:",p%glb%fr
+    write(*,'(A20,3ES12.3)')"L, U, T:",p%glb%L, p%glb%U, p%glb%T
     write(*,'(A20,F10.4)')"Density ratio:",p%glb%rho_12
     write(*,'(A20,F10.4)')"Viscosity ratio:",p%glb%mu_12
     write(*,'(A20,L5)')"Inverse Capturing:",p%glb%inverse
@@ -221,6 +222,10 @@ real(8) :: kh,ap
     open(unit=p%fil%momentum,file="./out/"//trim(p%glb%name)//"_Momentum.plt")
     write(p%fil%momentum,*)'variables = "T" "Px" "Py" "Pz" '
 
+    p%fil%position = 19
+    open(unit=p%fil%position,file="./out/"//trim(p%glb%name)//"_Position.plt")
+    write(p%fil%position,*)'variables = "T" "x" "y" "z" '
+
     p%glb%threads = p%glb%grid_x * p%glb%grid_y * p%glb%grid_z
     
     allocate( p%of(0:p%glb%threads-1))
@@ -294,7 +299,9 @@ real(8) :: kh,ap
     select case ( p%glb%how_to_paras )
     
         case (1)
-            continue
+            p%glb%L = ((p%glb%re * p%glb%mu_1 / p%glb%rho_1)**2.0d0 * p%glb%g / p%glb%Fr)**(1.0d0/3.0d0)
+            p%glb%U = dsqrt( p%glb%Fr * p%glb%g * p%glb%L )
+            p%glb%T = p%glb%L / p%glb%U
         case (2) ! L
             p%glb%U = dsqrt( p%glb%L * p%glb%g )
             p%glb%T = p%glb%L / p%glb%U

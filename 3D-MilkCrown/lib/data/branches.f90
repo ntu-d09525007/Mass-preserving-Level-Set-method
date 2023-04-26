@@ -30,6 +30,7 @@ real(8) :: loss_vol_max, loss_vol_maxv
 real(8) :: loss_int, loss_intv
 real(8) :: Ek, Ep, Es, Ev, Ek0, Ep0, Es0, energy_unit
 real(8) :: px, py, pz
+real(8) :: xc, yc, zc
 real(8) :: re, we, fr
 real(8) :: t_w, t_tol
 real(8) :: p_w1, p_w2, p_tol, p_b

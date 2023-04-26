@@ -29,7 +29,7 @@ p%glb%loss_vol_maxv = max(p%glb%loss_vol_maxv, abs(p%glb%ivolv-p%glb%volv)/p%glb
 call energy_and_momentum
 write(p%fil%energy, '(7ES15.4)')p%glb%time, p%glb%ek, p%glb%ep, p%glb%es, p%glb%ev, p%glb%ek+p%glb%es+p%glb%ep+p%glb%ev, p%glb%ek0+p%glb%ep0+p%glb%es0
 write(p%fil%momentum, '(7ES15.4)')p%glb%time, p%glb%px, p%glb%py, p%glb%pz
-
+write(p%fil%position, '(7ES15.4)')p%glb%time, p%glb%xc, p%glb%yc, p%glb%zc
 ! !Drybed 
 ! damfront = 0.0d0; damh=0.0d0
 ! !$omp parallel do private(i,j,k), reduction(max:damfront, damh), private(r)
@@ -127,6 +127,10 @@ real(8) :: e, e0
     e = p%glb%ek+p%glb%ep+p%glb%es+p%glb%ev
     e0 = p%glb%ek0+p%glb%ep0+p%glb%es0
 
+    write(*,'("         Position x: ",ES15.4)')p%glb%xc
+    write(*,'("         Position y: ",ES15.4)')p%glb%yc
+    write(*,'("         Position z: ",ES15.4)')p%glb%zc
+    write(*,*)''
     write(*,'("         Momentum x: ",ES15.4)')p%glb%px
     write(*,'("         Momentum y: ",ES15.4)')p%glb%py
     write(*,'("         Momentum z: ",ES15.4)')p%glb%pz
@@ -135,8 +139,8 @@ real(8) :: e, e0
     write(*,'("   Potential Energy: ",2ES15.4)')p%glb%ep, p%glb%ep0
     write(*,'("     Surface Energy: ",2ES15.4)')p%glb%es, p%glb%es0
     write(*,'("Viscous Dissipation: ",2ES15.4)')p%glb%ev
-    write(*,'("       Total Energy: ",2ES15.4, F15.8, "%")')e, e0, (e0-e)/e0
-
+    write(*,'("       Total Energy: ",2ES15.4, F15.8, "%")')e, e0, 100*(e0-e)/e0
+    write(*,*)''
 end subroutine
 
 subroutine calculate_interface_loss()
@@ -212,6 +216,7 @@ integer :: i,j,k,id
 real(8) :: A, Q, lQ, Ke, lKe, dv, Po
 real(8) :: ux, uy, uz, vx, vy, vz, wx, wy, wz
 real(8) :: px, py, pz, v, marker
+real(8) :: xc, yc, zc
 
 call p%rho_mu
 
@@ -228,13 +233,16 @@ Ke = 0.0
 Po = 0.0
 Q = 0.0
 v = 0.0
+xc = 0.0
+yc = 0.0
+zc = 0.0
 
-!$omp parallel do reduction(+:A, Ke, Po, Q, px, py, pz, v), &
+!$omp parallel do reduction(+:A, Ke, Po, Q, px, py, pz, v, xc, yc, zc), &
 !$omp& private(i, j, k, lq, lke, ux, uy, uz, vx, vy, vz, wx, wy, wz, marker)
 do id = 0, p%glb%threads-1
     
-    !$omp parallel do collapse(3) reduction(+:A, Ke, Po, Q, px, py, pz, v) &
-    !$omp& private(i, j, k, lq, lke, ux, uy, uz, vx, vy, vz, wx, wy, wz)
+    !$omp parallel do collapse(3) reduction(+:A, Ke, Po, Q, px, py, pz, v, xc, yc, zc) &
+    !$omp& private(i, j, k, lq, lke, ux, uy, uz, vx, vy, vz, wx, wy, wz, marker)
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke
     do j = p%of(id)%loc%js, p%of(id)%loc%je
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
@@ -252,6 +260,10 @@ do id = 0, p%glb%threads-1
         py = py + marker * p%of(id)%loc%nvel%y%now(i,j,k) * dv
         pz = pz + marker * p%of(id)%loc%nvel%z%now(i,j,k) * dv
         v = v + marker * dv
+
+        xc = xc + marker * p%glb%x(i,j,k) * dv
+        yc = yc + marker * p%glb%y(i,j,k) * dv
+        zc = zc + marker * p%glb%z(i,j,k) * dv
 
         if( marker > 0.0 )then
 
@@ -285,6 +297,10 @@ A = A / p%glb%dx / 2
 p%glb%px = px / v
 p%glb%py = py / v
 p%glb%pz = pz / v
+
+p%glb%xc = xc / v
+p%glb%yc = yc / v
+p%glb%zc = zc / v
 
 p%glb%Es = A * p%glb%Fr / p%glb%We * p%glb%energy_unit * p%glb%btn_sf
 p%glb%Ek = Ke * p%glb%Fr * p%glb%energy_unit
