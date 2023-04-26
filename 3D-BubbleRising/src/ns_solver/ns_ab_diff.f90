@@ -84,9 +84,9 @@ do i = q%loc%is, q%loc%ie
     phiy = 0.25d0*(phi(i+1,j+1,k)-phi(i+1,j-1,k)+phi(i,j+1,k)-phi(i,j-1,k))/q%glb%dy
     phiz = 0.25d0*(phi(i+1,j,k+1)-phi(i+1,j,k-1)+phi(i,j,k+1)-phi(i,j,k-1))/q%glb%dz 
 
-    dif_x = mu_ / rho_ * xx / q%glb%re !+ (1.0d0-q%glb%mu_12) * delta_ * phix * 2.0d0*ux / ( rho_ * q%glb%re)
-    dif_y = mu_ / rho_ * yy / q%glb%re !+ (1.0d0-q%glb%mu_12) * delta_ * phiy * (uy+vx)  / ( rho_ * q%glb%re)
-    dif_z = mu_ / rho_ * zz / q%glb%re !+ (1.0d0-q%glb%mu_12) * delta_ * phiz * (uz+wx)  / ( rho_ * q%glb%re)
+    dif_x = mu_ / rho_ * xx / q%glb%re + (1.0d0-q%glb%mu_12) * delta_ * phix * 2.0d0*ux / ( rho_ * q%glb%re)
+    dif_y = mu_ / rho_ * yy / q%glb%re + (1.0d0-q%glb%mu_12) * delta_ * phiy * (uy+vx)  / ( rho_ * q%glb%re)
+    dif_z = mu_ / rho_ * zz / q%glb%re + (1.0d0-q%glb%mu_12) * delta_ * phiz * (uz+wx)  / ( rho_ * q%glb%re)
 
     sx(i,j,k) = sx(i,j,k) + alpha * ( dif_x+dif_y+dif_z + q%glb%gx*q%glb%btn_g / q%glb%fr &
             & - q%glb%btn_sf*curv_*delta_*phix / (q%glb%we*rho_)  )
@@ -113,9 +113,9 @@ do i = q%loc%is, q%loc%ie
     phiy = ( phi(i,j+1,k)-phi(i,j,k) )/q%glb%dy
     phiz = 0.25d0*(phi(i,j+1,k+1)-phi(i,j+1,k-1)+phi(i,j,k+1)-phi(i,j,k-1))/q%glb%dz
 
-    dif_x = mu_ / rho_ * xx / q%glb%re !+ (1.0d0-q%glb%mu_12) * delta_ * phix*(uy+vx) / ( rho_ * q%glb%re)
-    dif_y = mu_ / rho_ * yy / q%glb%re !+ (1.0d0-q%glb%mu_12) * delta_ * phiy*2.0d0*vy/ ( rho_ * q%glb%re)
-    dif_z = mu_ / rho_ * zz / q%glb%re !+ (1.0d0-q%glb%mu_12) * delta_ * phiz*(wy+vz) / ( rho_ * q%glb%re)
+    dif_x = mu_ / rho_ * xx / q%glb%re + (1.0d0-q%glb%mu_12) * delta_ * phix*(uy+vx) / ( rho_ * q%glb%re)
+    dif_y = mu_ / rho_ * yy / q%glb%re + (1.0d0-q%glb%mu_12) * delta_ * phiy*2.0d0*vy/ ( rho_ * q%glb%re)
+    dif_z = mu_ / rho_ * zz / q%glb%re + (1.0d0-q%glb%mu_12) * delta_ * phiz*(wy+vz) / ( rho_ * q%glb%re)
 
     sy(i,j,k) = sy(i,j,k) + alpha * ( dif_x+dif_y+dif_z + q%glb%gy * q%glb%btn_g / q%glb%fr &
             & - q%glb%btn_sf * curv_*delta_ * phiy / (q%glb%we*rho_)  )
@@ -138,9 +138,9 @@ do i = q%loc%is, q%loc%ie
     phiy = 0.25d0*( phi(i,j+1,k+1) - phi(i,j-1,k+1) + phi(i,j+1,k) - phi(i,j-1,k) )/q%glb%dy
     phiz = ( phi(i,j,k+1) - phi(i,j,k) ) / q%glb%dz
     
-    dif_x = mu_ / rho_ * xx / q%glb%re !+ (1.0d0-q%glb%mu_12) * delta_ * phix * (uz+wx)  / ( rho_ * q%glb%re )
-    dif_y = mu_ / rho_ * yy / q%glb%re !+ (1.0d0-q%glb%mu_12) * delta_ * phiy * (vz+wy)  / ( rho_ * q%glb%re )
-    dif_z = mu_ / rho_ * zz / q%glb%re !+ (1.0d0-q%glb%mu_12) * delta_ * phiz * 2.0d0*wz / ( rho_ * q%glb%re )
+    dif_x = mu_ / rho_ * xx / q%glb%re + (1.0d0-q%glb%mu_12) * delta_ * phix * (uz+wx)  / ( rho_ * q%glb%re )
+    dif_y = mu_ / rho_ * yy / q%glb%re + (1.0d0-q%glb%mu_12) * delta_ * phiy * (vz+wy)  / ( rho_ * q%glb%re )
+    dif_z = mu_ / rho_ * zz / q%glb%re + (1.0d0-q%glb%mu_12) * delta_ * phiz * 2.0d0*wz / ( rho_ * q%glb%re )
 
     sz(i,j,k) = sz(i,j,k) + alpha * ( dif_x+dif_y+dif_z + q%glb%gz * q%glb%btn_g / q%glb%fr &
             & - q%glb%btn_sf * curv_ * delta_ * phiz / (q%glb%we*rho_)  )
