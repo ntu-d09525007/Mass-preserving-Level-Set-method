@@ -248,7 +248,9 @@ do id = 0, p%glb%threads-1
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
 
         ! Surface area
-        if( abs(p%of(id)%loc%phi%now(i,j,k)) < p%glb%dx ) A = A + dv
+        if( p%of(id)%loc%phi%now(i,j,k) < p%glb%dx .and. p%of(id)%loc%phi%now(i,j,k) > 0.0)then
+             A = A + dv
+        endif
 
         if( p%glb%method .ne. 3)then
             marker = p%of(id)%loc%heavy%now(i,j,k)
@@ -292,7 +294,7 @@ do id = 0, p%glb%threads-1
 enddo
 !$omp end parallel do
 
-A = A / p%glb%dx / 2
+A = A / p%glb%dx
 
 p%glb%px = px / v
 p%glb%py = py / v
