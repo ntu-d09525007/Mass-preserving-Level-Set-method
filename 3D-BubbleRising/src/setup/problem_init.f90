@@ -70,6 +70,8 @@ CHARACTER(100) :: NAME_OF_FILE
                                                  & -sqrt((x-2.0)**2+(y-2.0)**2+(z-2.5)**2) + 0.5)
             endif
             
+            p%of(id)%loc%phi%now(i,j,k) = - p%of(id)%loc%phi%now(i,j,k)
+
         end do
         end do
         end do
