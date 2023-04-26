@@ -18,7 +18,7 @@ implicit none
 
 !call level_set_symplectic_solver 
 call level_set_rk3_solver
-if(mod(p%glb%iter,10).eq.0)call level_set_rk3_redis(1)
+if(mod(p%glb%iter,20).eq.0)call level_set_rk3_redis(1)
 
 end subroutine
 
@@ -28,7 +28,7 @@ implicit none
 
 !call level_set_symplectic_solver 
 call level_set_rk3_solver
-if(mod(p%glb%iter,10).eq.0)call level_set_rk3_redis(1)
+if(mod(p%glb%iter,20).eq.0)call level_set_rk3_redis(1)
 call mass_preserving_level_set
 
 end subroutine
