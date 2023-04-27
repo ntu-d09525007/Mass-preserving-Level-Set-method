@@ -248,7 +248,9 @@ do id = 0, p%glb%threads-1
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
 
         ! Surface area
-        if( abs(p%of(id)%loc%phi%now(i,j,k)) < p%glb%dx ) A = A + dv
+        if( p%of(id)%loc%phi%now(i,j,k) < p%glb%dx .and. p%of(id)%loc%phi%now(i,j,k) > 0.0)then
+             A = A + dv
+        endif
 
         if( p%glb%method .ne. 3)then
             marker = p%of(id)%loc%heavy%now(i,j,k)
@@ -265,7 +267,7 @@ do id = 0, p%glb%threads-1
         yc = yc + marker * p%glb%y(i,j,k) * dv
         zc = zc + marker * p%glb%z(i,j,k) * dv
 
-        if( marker > 0.0 )then
+        if( marker > 0.99 )then
 
             ! Kinetic energy
             lke = p%of(id)%loc%nvel%x%now(i,j,k)**2 + p%of(id)%loc%nvel%y%now(i,j,k)**2 + p%of(id)%loc%nvel%z%now(i,j,k)**2
@@ -292,7 +294,7 @@ do id = 0, p%glb%threads-1
 enddo
 !$omp end parallel do
 
-A = A / p%glb%dx / 2
+A = A / p%glb%dx
 
 p%glb%px = px / v
 p%glb%py = py / v
@@ -310,11 +312,10 @@ if(p%glb%Ev < 0.0)then
     p%glb%Es0 = p%glb%Es
     p%glb%Ek0 = p%glb%Ek
     p%glb%Ep0 = p%glb%Ep
-    p%glb%Ev = Q * p%glb%dt * p%glb%Fr / p%glb%Re * p%glb%energy_unit
+    p%glb%Ev = 0.0d0
 else
     p%glb%Ev = p%glb%Ev + Q * p%glb%dt * p%glb%Fr / p%glb%Re * p%glb%energy_unit
 endif
-
 
 
 end subroutine

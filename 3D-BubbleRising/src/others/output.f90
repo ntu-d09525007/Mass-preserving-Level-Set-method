@@ -312,7 +312,7 @@ if(p%glb%Ev < 0.0)then
     p%glb%Es0 = p%glb%Es
     p%glb%Ek0 = p%glb%Ek
     p%glb%Ep0 = p%glb%Ep
-    p%glb%Ev = Q * p%glb%dt * p%glb%Fr / p%glb%Re * p%glb%energy_unit
+    p%glb%Ev = 0.0d0
 else
     p%glb%Ev = p%glb%Ev + Q * p%glb%dt * p%glb%Fr / p%glb%Re * p%glb%energy_unit
 endif
