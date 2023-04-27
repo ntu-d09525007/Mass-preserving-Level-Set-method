@@ -267,7 +267,7 @@ do id = 0, p%glb%threads-1
         yc = yc + marker * p%glb%y(i,j,k) * dv
         zc = zc + marker * p%glb%z(i,j,k) * dv
 
-        if( marker > 0.5 )then
+        if( marker > 0.99 )then
 
             ! Kinetic energy
             lke = p%of(id)%loc%nvel%x%now(i,j,k)**2 + p%of(id)%loc%nvel%y%now(i,j,k)**2 + p%of(id)%loc%nvel%z%now(i,j,k)**2
