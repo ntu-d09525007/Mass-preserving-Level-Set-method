@@ -45,7 +45,7 @@ CHARACTER(100) :: NAME_OF_FILE
                 y = 0.5d0*( p%glb%y(i,j,k)+p%glb%y(i,j-1,k) ) + real(jj,8)*p%glb%dy/real(ug,8)
                 z = 0.5d0*( p%glb%z(i,j,k)+p%glb%z(i,j,k-1) ) + real(kk,8)*p%glb%dz/real(ug,8)
 
-                if(  sqrt((x-2.0)**2+(y-2.0)**2+(z-1.0)**2) <= 0.5 .or. sqrt((x-2.0)**2+(y-2.0)**2+(z-2.5)**2) <= 0.5 )then
+                if(  z<=1.0 .and. y<=1.0d0 .and. x<=1.0d0 )then
                     p%of(id)%loc%vof%now(i,j,k) = p%of(id)%loc%vof%now(i,j,k) +  1.0d0/real(ug,8)**3.0d0
                 end if
                 
@@ -61,13 +61,10 @@ CHARACTER(100) :: NAME_OF_FILE
             p%of(id)%loc%vel%y%now(i,j,k) = 0.0d0
             p%of(id)%loc%vel%z%now(i,j,k) = 0.0d0
 
-            if( sqrt((x-2.0)**2+(y-2.0)**2+(z-1.0)**2) <= 0.5 )then 
-                p%of(id)%loc%phi%now(i,j,k) = -sqrt((x-2.0)**2+(y-2.0)**2+(z-1.0)**2) + 0.5
-            else if( sqrt((x-2.0)**2+(y-2.0)**2+(z-2.5)**2) <= 0.5 )then 
-                p%of(id)%loc%phi%now(i,j,k) = -sqrt((x-2.0)**2+(y-2.0)**2+(z-2.5)**2) + 0.5
+            if(  z<=1.0 .and. y<=1.0d0 .and. x<=1.0d0 )then
+                p%of(id)%loc%phi%now(i,j,k) = 1.0d0
             else
-                p%of(id)%loc%phi%now(i,j,k) = max( -sqrt((x-2.0)**2+(y-2.0)**2+(z-1.0)**2) + 0.5, &
-                                                 & -sqrt((x-2.0)**2+(y-2.0)**2+(z-2.5)**2) + 0.5)
+                p%of(id)%loc%phi%now(i,j,k) = -1.0d0
             endif
             
         end do
@@ -88,7 +85,7 @@ CHARACTER(100) :: NAME_OF_FILE
     call pt%phi%sync
     call pt%vof%sync
 
-    !call level_set_rk3_redis(0)
+    call level_set_rk3_redis(0)
 
     call p%node_vel
     call pt%nvel%sync

@@ -18,7 +18,6 @@ do id = 0, p%glb%threads-1
     call ns_ab_diff_job_sec(p%of(id),p%of(id)%loc%velsrc%x%now,p%of(id)%loc%velsrc%y%now,p%of(id)%loc%velsrc%z%now,&
                                      p%of(id)%loc%vel%x%old,p%of(id)%loc%vel%y%old,p%of(id)%loc%vel%z%old, &
                                      p%of(id)%loc%phi%old,p%of(id)%loc%normals%curv%old,p%of(id)%loc%delta%old,&
-                                     p%of(id)%loc%normals%x%old, p%of(id)%loc%normals%y%old, p%of(id)%loc%normals%z%old,
                                      p%of(id)%loc%rho%old,p%of(id)%loc%mu%old,.false.,1.0d0)
     
 enddo
@@ -26,13 +25,13 @@ enddo
     
 end subroutine
 
-subroutine ns_ab_diff_job_sec(q,sx,sy,sz,u,v,w,phi,curv,delta,nx,ny,nz,rho,mu,reset,alpha)
+subroutine ns_ab_diff_job_sec(q,sx,sy,sz,u,v,w,phi,curv,delta,rho,mu,reset,alpha)
 use all
 implicit none
 type(job) :: q
 real(8), dimension(q%loc%is-q%glb%ghc:q%loc%ie+q%glb%ghc,&
                   &q%loc%js-q%glb%ghc:q%loc%je+q%glb%ghc,&
-                  &q%loc%ks-q%glb%ghc:q%loc%ke+q%glb%ghc) :: sx,sy,sz,u,v,w,phi,curv,delta,rho,mu,nx,ny,nz
+                  &q%loc%ks-q%glb%ghc:q%loc%ke+q%glb%ghc) :: sx,sy,sz,u,v,w,phi,curv,delta,rho,mu
 integer :: i,j,k
 logical :: reset
 real(8) :: alpha
@@ -81,13 +80,9 @@ do i = q%loc%is, q%loc%ie
     vx = 0.5d0*( v(i+1,j,k)-v(i,j,k)+v(i+1,j-1,k)-v(i,j-1,k) )/q%glb%dx
     wx = 0.5d0*( w(i+1,j,k)-w(i,j,k)+w(i+1,j,k-1)-w(i,j,k-1) )/q%glb%dx
 
-    ! phix = (phi(i+1,j,k)-phi(i,j,k))/q%glb%dx
-    ! phiy = 0.25d0*(phi(i+1,j+1,k)-phi(i+1,j-1,k)+phi(i,j+1,k)-phi(i,j-1,k))/q%glb%dy
-    ! phiz = 0.25d0*(phi(i+1,j,k+1)-phi(i+1,j,k-1)+phi(i,j,k+1)-phi(i,j,k-1))/q%glb%dz 
-
-    phix = 0.5d0*( nx(i,j,k) + nx(i+1,j,k) )
-    phiy = 0.5d0*( ny(i,j,k) + ny(i+1,j,k) )
-    phiz = 0.5d0*( nz(i,j,k) + nz(i+1,j,k) )
+    phix = (phi(i+1,j,k)-phi(i,j,k))/q%glb%dx
+    phiy = 0.25d0*(phi(i+1,j+1,k)-phi(i+1,j-1,k)+phi(i,j+1,k)-phi(i,j-1,k))/q%glb%dy
+    phiz = 0.25d0*(phi(i+1,j,k+1)-phi(i+1,j,k-1)+phi(i,j,k+1)-phi(i,j,k-1))/q%glb%dz 
 
     dif_x = mu_ / rho_ * xx / q%glb%re !+ (1.0d0-q%glb%mu_12) * delta_ * phix * 2.0d0*ux / ( rho_ * q%glb%re)
     dif_y = mu_ / rho_ * yy / q%glb%re !+ (1.0d0-q%glb%mu_12) * delta_ * phiy * (uy+vx)  / ( rho_ * q%glb%re)
@@ -114,13 +109,9 @@ do i = q%loc%is, q%loc%ie
     uy = 0.5d0*( u(i,j+1,k)-u(i,j,k)+u(i-1,j+1,k)-u(i-1,j,k) )/q%glb%dy
     wy = 0.5d0*( w(i,j+1,k)-w(i,j,k)+w(i,j+1,k-1)-w(i,j,k-1) )/q%glb%dy
 
-    ! phix = 0.25d0*(phi(i+1,j,k)-phi(i-1,j,k)+phi(i+1,j+1,k)-phi(i-1,j+1,k))/q%glb%dx
-    ! phiy = ( phi(i,j+1,k)-phi(i,j,k) )/q%glb%dy
-    ! phiz = 0.25d0*(phi(i,j+1,k+1)-phi(i,j+1,k-1)+phi(i,j,k+1)-phi(i,j,k-1))/q%glb%dz
-
-    phix = 0.5d0*( nx(i,j,k) + nx(i,j+1,k) )
-    phiy = 0.5d0*( ny(i,j,k) + ny(i,j+1,k) )
-    phiz = 0.5d0*( nz(i,j,k) + nz(i,j+1,k) )
+    phix = 0.25d0*(phi(i+1,j,k)-phi(i-1,j,k)+phi(i+1,j+1,k)-phi(i-1,j+1,k))/q%glb%dx
+    phiy = ( phi(i,j+1,k)-phi(i,j,k) )/q%glb%dy
+    phiz = 0.25d0*(phi(i,j+1,k+1)-phi(i,j+1,k-1)+phi(i,j,k+1)-phi(i,j,k-1))/q%glb%dz
 
     dif_x = mu_ / rho_ * xx / q%glb%re !+ (1.0d0-q%glb%mu_12) * delta_ * phix*(uy+vx) / ( rho_ * q%glb%re)
     dif_y = mu_ / rho_ * yy / q%glb%re !+ (1.0d0-q%glb%mu_12) * delta_ * phiy*2.0d0*vy/ ( rho_ * q%glb%re)
@@ -143,13 +134,9 @@ do i = q%loc%is, q%loc%ie
     uz = 0.5d0*( u(i,j,k+1)-u(i,j,k)+u(i-1,j,k+1)-u(i-1,j,k) )/q%glb%dz
     vz = 0.5d0*( v(i,j,k+1)-v(i,j,k)+v(i,j-1,k+1)-v(i,j-1,k) )/q%glb%dz
 
-    ! phix = 0.25d0*( phi(i+1,j,k+1) - phi(i-1,j,k+1) + phi(i+1,j,k) - phi(i-1,j,k) )/q%glb%dx
-    ! phiy = 0.25d0*( phi(i,j+1,k+1) - phi(i,j-1,k+1) + phi(i,j+1,k) - phi(i,j-1,k) )/q%glb%dy
-    ! phiz = ( phi(i,j,k+1) - phi(i,j,k) ) / q%glb%dz
-
-    phix = 0.5d0*( nx(i,j,k) + nx(i,j,k+1) )
-    phiy = 0.5d0*( ny(i,j,k) + ny(i,j,k+1) )
-    phiz = 0.5d0*( nz(i,j,k) + nz(i,j,k+1) )
+    phix = 0.25d0*( phi(i+1,j,k+1) - phi(i-1,j,k+1) + phi(i+1,j,k) - phi(i-1,j,k) )/q%glb%dx
+    phiy = 0.25d0*( phi(i,j+1,k+1) - phi(i,j-1,k+1) + phi(i,j+1,k) - phi(i,j-1,k) )/q%glb%dy
+    phiz = ( phi(i,j,k+1) - phi(i,j,k) ) / q%glb%dz
     
     dif_x = mu_ / rho_ * xx / q%glb%re !+ (1.0d0-q%glb%mu_12) * delta_ * phix * (uz+wx)  / ( rho_ * q%glb%re )
     dif_y = mu_ / rho_ * yy / q%glb%re !+ (1.0d0-q%glb%mu_12) * delta_ * phiy * (vz+wy)  / ( rho_ * q%glb%re )
