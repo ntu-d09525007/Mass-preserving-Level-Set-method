@@ -18,7 +18,7 @@ do id = 0, p%glb%threads-1
     call ns_ab_diff_job_sec(p%of(id),p%of(id)%loc%velsrc%x%now,p%of(id)%loc%velsrc%y%now,p%of(id)%loc%velsrc%z%now,&
                                      p%of(id)%loc%vel%x%old,p%of(id)%loc%vel%y%old,p%of(id)%loc%vel%z%old, &
                                      p%of(id)%loc%phi%old,p%of(id)%loc%normals%curv%old,p%of(id)%loc%delta%old,&
-                                     p%of(id)%loc%normals%x%old, p%of(id)%loc%normals%y%old, p%of(id)%loc%normals%z%old,
+                                     p%of(id)%loc%normals%x%old, p%of(id)%loc%normals%y%old, p%of(id)%loc%normals%z%old, &
                                      p%of(id)%loc%rho%old,p%of(id)%loc%mu%old,.false.,1.0d0)
     
 enddo
