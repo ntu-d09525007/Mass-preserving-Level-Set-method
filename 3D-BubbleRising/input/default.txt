@@ -9,15 +9,15 @@ ooo Nested OpenMP threads
 ooo Domain splits for plotting (Increase if stack-overflow)
 2
 ooo	Multigrid level
-6
+5
 ooo	Cells per unit length 
 16
 ooo	Number of ghost cell
 3
 ooo	Range of domain in X direction
-0.0 		4.0
+-2.0 		2.0
 ooo	Range of domain in Y direction
-0.0			4.0
+-2.0 		2.0
 ooo	Range of domain in Z direction
 0.0			8.0
 ooo	Time to stop / plot

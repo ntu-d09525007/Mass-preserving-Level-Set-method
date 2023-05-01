@@ -78,8 +78,8 @@ use all
 implicit none
 
     write(*,'("Divergence :",2ES15.4)')p%glb%vel_div,p%glb%vel_sdiv
-    ! write(*,'("L2 norm    :",ES15.4)')p%glb%ns_l2f
-    ! write(*,'("Linf norm  :",ES15.4)')p%glb%ns_linf
+    write(*,'("L2 norm    :",ES15.4)')p%glb%ns_l2f
+    write(*,'("Linf norm  :",ES15.4)')p%glb%ns_linf
     write(*,*)''
     write(*,'("PPE iters  :",I15)')p%glb%piter
     write(*,'("PPE error  :",ES15.4)')p%glb%ppe_linf

@@ -3,7 +3,7 @@ use all
 !$ use omp_lib
 implicit none
 integer :: id, i, j, k, ug, ii,jj,kk
-real(8) :: x, y, z, h
+real(8) :: x, y, z, dx, dy
 CHARACTER(100) :: NAME_OF_FILE
     
     NAME_OF_FILE="default.txt"
@@ -24,7 +24,8 @@ CHARACTER(100) :: NAME_OF_FILE
         
     call p%show
 
-    h = 0.1876 + 0.5 + 1.5 * p%glb%ls_wid
+    dx = 0.85 * dcos(dacos(-1.0d0)/4.0d0) * 0.5
+    dy = 0.85 * dsin(dacos(-1.0d0)/4.0d0) * 0.5
 
     ug=30
     !$omp parallel do private(i,j,k,ii,jj,kk,x,y,z)
@@ -45,7 +46,7 @@ CHARACTER(100) :: NAME_OF_FILE
                 y = 0.5d0*( p%glb%y(i,j,k)+p%glb%y(i,j-1,k) ) + real(jj,8)*p%glb%dy/real(ug,8)
                 z = 0.5d0*( p%glb%z(i,j,k)+p%glb%z(i,j,k-1) ) + real(kk,8)*p%glb%dz/real(ug,8)
 
-                if(  sqrt((x-2.0)**2+(y-2.0)**2+(z-1.0)**2) <= 0.5 .or. sqrt((x-2.0)**2+(y-2.0)**2+(z-2.5)**2) <= 0.5 )then
+                if(  sqrt((x+dx)**2+(y+dy)**2+(z-1.0)**2) <= 0.5 .or. sqrt((x-dx)**2+(y-dy)**2+(z-2.5)**2) <= 0.5 )then
                     p%of(id)%loc%vof%now(i,j,k) = p%of(id)%loc%vof%now(i,j,k) +  1.0d0/real(ug,8)**3.0d0
                 end if
                 
@@ -61,16 +62,14 @@ CHARACTER(100) :: NAME_OF_FILE
             p%of(id)%loc%vel%y%now(i,j,k) = 0.0d0
             p%of(id)%loc%vel%z%now(i,j,k) = 0.0d0
 
-            ! if( sqrt((x-2.0)**2+(y-2.0)**2+(z-1.0)**2) <= 0.5 )then 
-            !     p%of(id)%loc%phi%now(i,j,k) = -sqrt((x-2.0)**2+(y-2.0)**2+(z-1.0)**2) + 0.5
-            ! else if( sqrt((x-2.0)**2+(y-2.0)**2+(z-2.5)**2) <= 0.5 )then 
-            !     p%of(id)%loc%phi%now(i,j,k) = -sqrt((x-2.0)**2+(y-2.0)**2+(z-2.5)**2) + 0.5
-            ! else
-            !     p%of(id)%loc%phi%now(i,j,k) = max( -sqrt((x-2.0)**2+(y-2.0)**2+(z-1.0)**2) + 0.5, &
-            !                                      & -sqrt((x-2.0)**2+(y-2.0)**2+(z-2.5)**2) + 0.5)
-            ! endif
-
-            p%of(id)%loc%phi%now(i,j,k) = -sqrt((x-2.0)**2+(y-2.0)**2+(z-1.0)**2) + 0.5
+            if( sqrt((x+dx)**2+(y+dy)**2+(z-1.0)**2) <= 0.5 )then 
+                p%of(id)%loc%phi%now(i,j,k) = - sqrt((x+dx)**2+(y+dy)**2+(z-1.0)**2) + 0.5
+            else if( sqrt((x-dx)**2+(y-dy)**2+(z-2.5)**2) <= 0.5 )then 
+                p%of(id)%loc%phi%now(i,j,k) = - sqrt((x-dx)**2+(y-dy)**2+(z-2.5)**2) + 0.5
+            else
+                p%of(id)%loc%phi%now(i,j,k) = max( - sqrt((x+dx)**2+(y+dy)**2+(z-1.0)**2) + 0.5, &
+                                                 & - sqrt((x-dx)**2+(y-dy)**2+(z-2.5)**2) + 0.5)
+            endif
             
         end do
         end do
