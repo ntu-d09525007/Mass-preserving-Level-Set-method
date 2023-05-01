@@ -61,14 +61,16 @@ CHARACTER(100) :: NAME_OF_FILE
             p%of(id)%loc%vel%y%now(i,j,k) = 0.0d0
             p%of(id)%loc%vel%z%now(i,j,k) = 0.0d0
 
-            if( sqrt((x-2.0)**2+(y-2.0)**2+(z-1.0)**2) <= 0.5 )then 
-                p%of(id)%loc%phi%now(i,j,k) = -sqrt((x-2.0)**2+(y-2.0)**2+(z-1.0)**2) + 0.5
-            else if( sqrt((x-2.0)**2+(y-2.0)**2+(z-2.5)**2) <= 0.5 )then 
-                p%of(id)%loc%phi%now(i,j,k) = -sqrt((x-2.0)**2+(y-2.0)**2+(z-2.5)**2) + 0.5
-            else
-                p%of(id)%loc%phi%now(i,j,k) = max( -sqrt((x-2.0)**2+(y-2.0)**2+(z-1.0)**2) + 0.5, &
-                                                 & -sqrt((x-2.0)**2+(y-2.0)**2+(z-2.5)**2) + 0.5)
-            endif
+            ! if( sqrt((x-2.0)**2+(y-2.0)**2+(z-1.0)**2) <= 0.5 )then 
+            !     p%of(id)%loc%phi%now(i,j,k) = -sqrt((x-2.0)**2+(y-2.0)**2+(z-1.0)**2) + 0.5
+            ! else if( sqrt((x-2.0)**2+(y-2.0)**2+(z-2.5)**2) <= 0.5 )then 
+            !     p%of(id)%loc%phi%now(i,j,k) = -sqrt((x-2.0)**2+(y-2.0)**2+(z-2.5)**2) + 0.5
+            ! else
+            !     p%of(id)%loc%phi%now(i,j,k) = max( -sqrt((x-2.0)**2+(y-2.0)**2+(z-1.0)**2) + 0.5, &
+            !                                      & -sqrt((x-2.0)**2+(y-2.0)**2+(z-2.5)**2) + 0.5)
+            ! endif
+
+            p%of(id)%loc%phi%now(i,j,k) = -sqrt((x-2.0)**2+(y-2.0)**2+(z-1.0)**2) + 0.5
             
         end do
         end do
