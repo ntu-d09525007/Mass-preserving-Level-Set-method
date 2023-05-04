@@ -14,8 +14,9 @@ integer :: iter
 
 p%glb%piter=0
 
-do iter = 1, 3
-
+do iter = 1, 10
+    
+    if(iter > 1) call ns_relaxation
     call ns_ab_setup
     call ns_ab_predictor 
 
@@ -23,6 +24,7 @@ do iter = 1, 3
     !call ppe_sor_solver(1.0d-6)
 
     call ns_check_convergence_vel
+    if( p%glb%ns_l2f > 1.0d-10 )exit
 
 enddo
     
