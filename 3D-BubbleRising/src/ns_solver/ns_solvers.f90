@@ -61,7 +61,9 @@ subroutine ns_relaxation
 use all
 !$ use omp_lib
 implicit none
-integer :: id,i,j,k
+integer :: id,i,j,k, w
+
+w = 0.5d0
 
 !$omp parallel do private(i,j,k)
 do id = 0, p%glb%threads-1
@@ -70,9 +72,9 @@ do id = 0, p%glb%threads-1
     do k = p%of(id)%loc%ks-p%glb%ghc, p%of(id)%loc%ke+p%glb%ghc
     do j = p%of(id)%loc%js-p%glb%ghc, p%of(id)%loc%je+p%glb%ghc
     do i = p%of(id)%loc%is-p%glb%ghc, p%of(id)%loc%ie+p%glb%ghc
-        p%of(id)%loc%vel%x%now(i,j,k) = 0.5d0 * ( p%of(id)%loc%vel%x%now(i,j,k) + p%of(id)%loc%vel%x%tmp(i,j,k) )
-        p%of(id)%loc%vel%y%now(i,j,k) = 0.5d0 * ( p%of(id)%loc%vel%y%now(i,j,k) + p%of(id)%loc%vel%y%tmp(i,j,k) )
-        p%of(id)%loc%vel%z%now(i,j,k) = 0.5d0 * ( p%of(id)%loc%vel%z%now(i,j,k) + p%of(id)%loc%vel%z%tmp(i,j,k) )
+        p%of(id)%loc%vel%x%now(i,j,k) = w * p%of(id)%loc%vel%x%now(i,j,k) + (1.0d0 - w) * p%of(id)%loc%vel%x%tmp(i,j,k) 
+        p%of(id)%loc%vel%y%now(i,j,k) = w * p%of(id)%loc%vel%y%now(i,j,k) + (1.0d0 - w) * p%of(id)%loc%vel%y%tmp(i,j,k) 
+        p%of(id)%loc%vel%z%now(i,j,k) = w * p%of(id)%loc%vel%z%now(i,j,k) + (1.0d0 - w) * p%of(id)%loc%vel%z%tmp(i,j,k) 
     end do
     end do
     end do

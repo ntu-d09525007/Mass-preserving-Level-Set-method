@@ -3,7 +3,7 @@ use all
 !$ use omp_lib
 implicit none
 integer :: id, i, j, k, ug, ii,jj,kk
-real(8) :: x, y, z, dx, dy
+real(8) :: x, y, z, dx, dy, theta
 CHARACTER(100) :: NAME_OF_FILE
     
     NAME_OF_FILE="default.txt"
@@ -24,8 +24,9 @@ CHARACTER(100) :: NAME_OF_FILE
         
     call p%show
 
-    dx = 0.85 * dcos(dacos(-1.0d0)/4.0d0) * 0.5
-    dy = 0.85 * dsin(dacos(-1.0d0)/4.0d0) * 0.5
+    theta = 0.0d0
+    dx = 0.85 * dcos(theta) * 0.5
+    dy = 0.85 * dsin(theta) * 0.5
 
     ug=30
     !$omp parallel do private(i,j,k,ii,jj,kk,x,y,z)

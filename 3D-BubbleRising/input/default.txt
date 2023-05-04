@@ -9,7 +9,7 @@ ooo Nested OpenMP threads
 ooo Domain splits for plotting (Increase if stack-overflow)
 2
 ooo	Multigrid level
-5
+6
 ooo	Cells per unit length 
 16
 ooo	Number of ghost cell
@@ -23,7 +23,7 @@ ooo	Range of domain in Z direction
 ooo	Time to stop / plot
 10.0		0.1
 ooo	Crount number ( advection / redistance )
-0.01		0.25
+0.01		0.5
 ooo	PPE iteration ( tolerance / w1 / w2 / valve )
 10.0	0.5		0.5		4.0
 ooo	SRK6 iteration ( tolerance / w )

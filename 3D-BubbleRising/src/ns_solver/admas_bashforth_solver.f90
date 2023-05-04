@@ -14,7 +14,7 @@ integer :: iter
 
 p%glb%piter=0
 
-do iter = 1, 10
+do iter = 1, 5
     
     if(iter > 1) call ns_relaxation
     call ns_ab_setup
