@@ -126,7 +126,7 @@ CHARACTER(100) :: NAME_OF_FILE
     enddo
     !$omp end parallel do
 
-    call ns_ab_setup
+    call second_order
 
     write(*,*) "plotting"
     call plot

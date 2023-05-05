@@ -3,13 +3,13 @@ ooo	Method to capture interface ( LS / MPLS / CLSVOF )
 ooo	Name of the problem 
 BubbleRising_16
 ooo	Dimension of threads grid in X, Y, Z direction
-2 		2 		4
+2 2 4
 ooo Nested OpenMP threads
 1
 ooo Domain splits for plotting (Increase if stack-overflow)
 2
 ooo	Multigrid level
-6
+5
 ooo	Cells per unit length 
 16
 ooo	Number of ghost cell
@@ -51,10 +51,10 @@ ooo	Density / Viscosity ratio of fluid 1, 2
 ooo Inverse Marker function
 1
 ooo	Velocity boundary condition in X direction ( no-slip / slip / non-reflective )
-1	1
+1 1
 ooo	Velocity boundary condition in Y direction ( no-slip / slip / non-reflective )
-1	1
+1 1
 ooo	Velocity boundary condition in Z direction ( no-slip / slip / non-reflective )
-1	1
+1 1
 ooo	Periodic ( X, Y, Z )
 0	0	0

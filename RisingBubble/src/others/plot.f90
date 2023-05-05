@@ -55,9 +55,25 @@ do id = 0, p%glb%threads-1
         E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'VOF_1', var = p%of(id)%loc%marker(1)%vof%now(nx1:nx2,ny1:ny2,nz1:nz2) )
         E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'VOF_2', var = p%of(id)%loc%marker(2)%vof%now(nx1:nx2,ny1:ny2,nz1:nz2) )
 
+        E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'Curvature', var = p%of(id)%loc%normals%curv%now(nx1:nx2,ny1:ny2,nz1:nz2) )
+        E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'Pressure', var = p%of(id)%loc%p%now(nx1:nx2,ny1:ny2,nz1:nz2) )
+
         E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'Velocity', varX = p%of(id)%loc%nvel%x%now(nx1:nx2,ny1:ny2,nz1:nz2),&
                                                             &varY = p%of(id)%loc%nvel%y%now(nx1:nx2,ny1:ny2,nz1:nz2),&
                                                             &varZ = p%of(id)%loc%nvel%z%now(nx1:nx2,ny1:ny2,nz1:nz2))
+
+        E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'Normals', varX = p%of(id)%loc%normals%x%now(nx1:nx2,ny1:ny2,nz1:nz2),&
+                                                           &varY = p%of(id)%loc%normals%y%now(nx1:nx2,ny1:ny2,nz1:nz2),&
+                                                           &varZ = p%of(id)%loc%normals%z%now(nx1:nx2,ny1:ny2,nz1:nz2))
+
+        E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'convection', varX = p%of(id)%loc%tmp%x%now(nx1:nx2,ny1:ny2,nz1:nz2),&
+                                                              &varY = p%of(id)%loc%tmp%y%now(nx1:nx2,ny1:ny2,nz1:nz2),&
+                                                              &varZ = p%of(id)%loc%tmp%z%now(nx1:nx2,ny1:ny2,nz1:nz2))
+
+        E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'diffusion', varX = p%of(id)%loc%tmp%x%old(nx1:nx2,ny1:ny2,nz1:nz2),&
+                                                             &varY = p%of(id)%loc%tmp%y%old(nx1:nx2,ny1:ny2,nz1:nz2),&
+                                                             &varZ = p%of(id)%loc%tmp%z%old(nx1:nx2,ny1:ny2,nz1:nz2))
+
         E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'close')
         E_IO = VTK_GEO_XML()
 

@@ -1,11 +1,3 @@
-subroutine ns_ab_setup
-implicit none
-
-    call ns_ab_adv_source
-    call ns_ab_diff_source
-
-end subroutine
-
 subroutine ns_ab_solver
 use all
 implicit none
@@ -13,7 +5,7 @@ integer :: iter
 
 p%glb%piter=0
 
-call ns_ab_setup
+call second_order
 call ns_ab_predictor 
 call ppe_mg_solver(p%glb%iter)
 !call ppe_sor_solver(1.0d-7)
