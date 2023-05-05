@@ -62,7 +62,7 @@ type(dum_matrices)  :: coe
 type(time_recorded) :: heavy, delta, grad, sign
 type(time_recorded) :: phi, p, rho, mu, vof
 type(time_recorded_derivatives) :: normals
-type(time_recorded_vec) :: vel, nvel, velsrc, tmp
+type(time_recorded_vec) :: vel, nvel, velsrc
 type(interface_function), dimension(:) :: marker(2)
 !-------------------------------------------
 ! type(time_recorded_vec) :: vort, lamb
@@ -166,7 +166,6 @@ CALL P%LOC%MU%ALLOC(IS,IE,JS,JE,KS,KE)
 CALL P%LOC%VEL%ALLOC(IS,IE,JS,JE,KS,KE)
 CALL P%LOC%NVEL%ALLOC(IS,IE,JS,JE,KS,KE)
 CALL P%LOC%VELSRC%ALLOC(IS,IE,JS,JE,KS,KE)
-CALL P%LOC%TMP%ALLOC(IS,IE,JS,JE,KS,KE)
 
 ! solvers
 CALL P%LOC%tdata%ALLOC(IS,IE,JS,JE,KS,KE,P%GLB%DT,P%GLB%t_w,P%GLB%GHC)
