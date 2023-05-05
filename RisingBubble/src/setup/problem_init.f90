@@ -173,6 +173,4 @@ CHARACTER(100) :: NAME_OF_FILE
         enddo
     enddo
 
-    call print_LS_info
-
 end subroutine

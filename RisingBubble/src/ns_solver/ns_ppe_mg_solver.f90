@@ -1,4 +1,4 @@
-subroutine ppe_mg_solver(input)
+subroutine ppe_mg_solver(input, w)
 use all
 !$ use omp_lib
 implicit none
@@ -6,11 +6,12 @@ integer :: iter, id, initer
 integer :: i,j,k,input
 integer(8) :: cpustart, cpuend
 real(8) :: grow
+real(8), optional :: w
 
 call system_clock(cpustart)
 
 call ppe_mg_solver_init
-call ppe_mg_solver_src(input)
+call ppe_mg_solver_src(input, w)
 
 initer=0
 
