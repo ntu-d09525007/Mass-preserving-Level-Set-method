@@ -13,16 +13,10 @@ integer :: iter
 
 p%glb%piter=0
 
-do iter = 1, 1
-    call ns_ab_setup
-    call ns_ab_predictor 
-    ! if( iter > 1)then
-    !     call ppe_mg_solver(p%glb%iter, 0.5d0)
-    ! else
-    !     call ppe_mg_solver(p%glb%iter)
-    ! endif
-    call ppe_sor_solver(1.0d-7)
-enddo
+call ns_ab_setup
+call ns_ab_predictor 
+call ppe_mg_solver(p%glb%iter)
+!call ppe_sor_solver(1.0d-7)
 
 call ns_check_convergence_vel
     

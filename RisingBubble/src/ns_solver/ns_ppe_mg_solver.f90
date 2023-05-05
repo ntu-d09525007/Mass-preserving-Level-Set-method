@@ -1,58 +1,67 @@
-subroutine ppe_mg_solver(input, w)
+subroutine ppe_mg_solver(input)
 use all
 !$ use omp_lib
 implicit none
-integer :: iter, id, initer
+integer :: iter, id, initer, outiter
 integer :: i,j,k,input
 integer(8) :: cpustart, cpuend
 real(8) :: grow
-real(8), optional :: w
 
 call system_clock(cpustart)
 
 call ppe_mg_solver_init
-call ppe_mg_solver_src(input, w)
 
-initer=0
-
-110 do iter = 1, 100
-
-    p%glb%piter=p%glb%piter+1
-
-    call multigrid_residual(1,.true.)
+do outiter = 1, 3
     
-    !call multigrid_full_V_cycle(.false.,5)
-    !call multigrid_w_cycle(.false.)
-    call multigrid_v_cycle(.false.)   
-    
-    call multigrid_residual(1,.false.)
-
-    grow = p%of(0)%loc%mg(1)%l2norm / p%of(0)%loc%mg(1)%l2norm0
-    
-    if( grow > 1.0d0 .or. abs(grow-1.0d0)<0.01 )then
-        if( initer < 5 )then
-            initer=initer+1
-            call ppe_mg_get_pressure
-            call ppe_mg_solver_src(0,1.5d0)
-            goto 110
-        else
-            if( p%of(0)%loc%mg(1)%l2norm < p%glb%p_tol )then
-                goto 115
-            endif
-        endif
-    else if ( p%of(0)%loc%mg(1)%l2norm < p%glb%p_tol*0.001d0 ) then
-        goto 115
+    if( outiter > 1)then
+        call ppe_mg_solver_src(input, 1.5d0)
+    else
+        call ppe_mg_solver_src(input)
     endif
-   
-    !if(mod(iter,50).eq.0)then
-    !    write(*,*)"Final:",initer,iter,p%of(0)%loc%mg(1)%l2norm
-    !endif
-    
+
+    initer=0
+
+    110 do iter = 1, 100
+
+        p%glb%piter=p%glb%piter+1
+
+        call multigrid_residual(1,.true.)
+        
+        !call multigrid_full_V_cycle(.false.,5)
+        !call multigrid_w_cycle(.false.)
+        call multigrid_v_cycle(.false.)   
+        
+        call multigrid_residual(1,.false.)
+
+        grow = p%of(0)%loc%mg(1)%l2norm / p%of(0)%loc%mg(1)%l2norm0
+        
+        if( grow > 1.0d0 .or. abs(grow-1.0d0)<0.01 )then
+            if( initer < 5 )then
+                initer=initer+1
+                call ppe_mg_get_pressure
+                call ppe_mg_solver_src(0,1.5d0)
+                goto 110
+            else
+                if( p%of(0)%loc%mg(1)%l2norm < p%glb%p_tol )then
+                    goto 115
+                endif
+            endif
+        else if ( p%of(0)%loc%mg(1)%l2norm < p%glb%p_tol*0.001d0 ) then
+            goto 115
+        endif
+       
+        !if(mod(iter,50).eq.0)then
+        !    write(*,*)"Final:",initer,iter,p%of(0)%loc%mg(1)%l2norm
+        !endif
+        
+    enddo
+
+    115 p%glb%ppe_linf = p%of(0)%loc%mg(1)%l2norm
+
+    call ppe_mg_get_pressure
+
 enddo
 
-115 p%glb%ppe_linf = p%of(0)%loc%mg(1)%l2norm
-
-call ppe_mg_get_pressure
 call ppe_mg_correction
 
 call system_clock(cpuend)
