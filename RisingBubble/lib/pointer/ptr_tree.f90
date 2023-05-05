@@ -7,6 +7,7 @@ type(pointer_parent) :: phi, p, vof
 type(pointer_vector_parent) :: vel, nvel, nvel_old, velsrc_old, velsrc
 type(pointer_vector_parent) :: normals!, vort
 type(pointer_vector_parent) :: tdatax, tdatay, tdataz
+type(pointer_vector_parent), dimension(:) :: marker(2)
 type(pointer_mg_parent) :: mg
 contains 
 procedure init => ptr_family_init
@@ -40,6 +41,9 @@ integer :: idx,idy,idz,id,level
     call p%tdatay%init(src,3)
     call p%tdataz%init(src,3)
 
+    call p%marker(1)%init(src, 2)
+    call p%marker(2)%init(src, 2)
+
     call p%mg%init(src)
 
     !$omp parallel do private(id,level), collapse(3)
@@ -56,6 +60,12 @@ integer :: idx,idy,idz,id,level
         p%phi%of(idx,idy,idz)%dat => src%of(id)%loc%phi%now
         p%vof%of(idx,idy,idz)%dat => src%of(id)%loc%vof%now
         p%p%of(idx,idy,idz)%dat => src%of(id)%loc%p%now
+
+        p%marker(1)%nodes(1)%of(idx,idy,idz)%dat => src%of(id)%loc%marker(1)%lsf%now
+        p%marker(1)%nodes(2)%of(idx,idy,idz)%dat => src%of(id)%loc%marker(1)%vof%now
+
+        p%marker(2)%nodes(1)%of(idx,idy,idz)%dat => src%of(id)%loc%marker(2)%lsf%now
+        p%marker(2)%nodes(2)%of(idx,idy,idz)%dat => src%of(id)%loc%marker(2)%vof%now
 
         p%vel%nodes(1)%of(idx,idy,idz)%dat => src%of(id)%loc%vel%x%now
         p%vel%nodes(2)%of(idx,idy,idz)%dat => src%of(id)%loc%vel%y%now

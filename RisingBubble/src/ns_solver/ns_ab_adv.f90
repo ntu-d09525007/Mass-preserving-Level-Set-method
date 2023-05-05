@@ -19,7 +19,7 @@ do id = 0, p%glb%threads-1
         
     call p%of(id)%find_stag_vel( p%of(id)%loc%tdata%x%s1, p%of(id)%loc%tdata%y%s1, p%of(id)%loc%tdata%z%s1, &
                                 &p%of(id)%loc%tdata%x%s2, p%of(id)%loc%tdata%y%s2, p%of(id)%loc%tdata%z%s2, &
-                                &p%of(id)%loc%vel%x%tmp, p%of(id)%loc%vel%y%tmp, p%of(id)%loc%vel%z%tmp )
+                                &p%of(id)%loc%vel%x%old, p%of(id)%loc%vel%y%old, p%of(id)%loc%vel%z%old )
 enddo       
 !$omp end parallel do
     
@@ -35,7 +35,7 @@ do id = 0, p%glb%threads-1
     do j = p%of(id)%loc%js, p%of(id)%loc%je
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
         
-        u = p%of(id)%loc%vel%x%tmp(i,j,k)
+        u = p%of(id)%loc%vel%x%old(i,j,k)
         v = p%of(id)%loc%tdata%y%s1(i,j,k)
         w = p%of(id)%loc%tdata%z%s1(i,j,k)
             
@@ -55,7 +55,7 @@ do id = 0, p%glb%threads-1
         !-----------------------------------------------------------
             
         u = p%of(id)%loc%tdata%x%s1(i,j,k)
-        v = p%of(id)%loc%vel%y%tmp(i,j,k)
+        v = p%of(id)%loc%vel%y%old(i,j,k)
         w = p%of(id)%loc%tdata%z%s2(i,j,k)
             
         xp = 0.5d0*(-p%of(id)%loc%vel%y%old(i+2,j,k)+4.0d0*p%of(id)%loc%vel%y%old(i+1,j,k)-3.0d0*p%of(id)%loc%vel%y%old(i,j,k))/p%glb%dx 
@@ -75,7 +75,7 @@ do id = 0, p%glb%threads-1
             
         u = p%of(id)%loc%tdata%x%s2(i,j,k)
         v = p%of(id)%loc%tdata%y%s2(i,j,k)
-        w = p%of(id)%loc%vel%z%tmp(i,j,k)
+        w = p%of(id)%loc%vel%z%old(i,j,k)
 
         xp = 0.5d0*(-p%of(id)%loc%vel%z%old(i+2,j,k)+4.0d0*p%of(id)%loc%vel%z%old(i+1,j,k)-3.0d0*p%of(id)%loc%vel%z%old(i,j,k))/p%glb%dx 
         xm = 0.5d0*( p%of(id)%loc%vel%z%old(i-2,j,k)-4.0d0*p%of(id)%loc%vel%z%old(i-1,j,k)+3.0d0*p%of(id)%loc%vel%z%old(i,j,k))/p%glb%dx

@@ -49,6 +49,12 @@ integer,allocatable :: id(:,:,:)
 logical :: xper, yper, zper, inverse
 end type global
 
+type interface_function
+real(8) :: vol, mass, ivol, imass
+real(8) :: volv, massv, ivolv, imassv
+type(time_recorded) :: lsf, vof
+end type interface_function
+
 type local
 integer :: id, idx, idy, idz
 integer :: is, ie, js, je, ks, ke
@@ -57,6 +63,7 @@ type(time_recorded) :: heavy, delta, grad, sign
 type(time_recorded) :: phi, p, rho, mu, vof
 type(time_recorded_derivatives) :: normals
 type(time_recorded_vec) :: vel, nvel, velsrc
+type(interface_function), dimension(:) :: marker(2)
 !-------------------------------------------
 ! type(time_recorded_vec) :: vort, lamb
 ! type(time_recorded_vec) :: vort_adv, vort_tws, vort_baro, vort_visc
@@ -136,6 +143,13 @@ CALL P%LOC%COE%ALLOC(IS,IE,JS,JE,KS,KE)
 
 ! level set method
 CALL P%LOC%PHI%ALLOC(IS,IE,JS,JE,KS,KE)
+
+call p%loc%marker(1)%lsf%alloc(is,ie,js,je,ks,ke)
+call p%loc%marker(2)%lsf%alloc(is,ie,js,je,ks,ke)
+
+call p%loc%marker(1)%vof%alloc(is,ie,js,je,ks,ke)
+call p%loc%marker(2)%vof%alloc(is,ie,js,je,ks,ke)
+
 CALL P%LOC%VOF%ALLOC(IS,IE,JS,JE,KS,KE)
 CALL P%LOC%heavy%ALLOC(IS,IE,JS,JE,KS,KE)
 CALL P%LOC%sign%ALLOC(IS,IE,JS,JE,KS,KE)
@@ -246,6 +260,12 @@ class(local) :: pp
     call pp%vel%init
     call pp%nvel%init
     call pp%velsrc%init
+
+    call pp%marker(1)%lsf%init
+    call pp%marker(2)%lsf%init
+
+    call pp%marker(1)%vof%init
+    call pp%marker(2)%vof%init
 
 end subroutine
 

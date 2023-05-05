@@ -2,8 +2,8 @@ subroutine problem_init()
 use all
 !$ use omp_lib
 implicit none
-integer :: id, i, j, k, ug, ii,jj,kk
-real(8) :: x, y, z, dx, dy, theta
+integer :: id, i, j, k, ug, ii,jj,kk, mid
+real(8) :: x, y, z, dx, dy, theta, l
 CHARACTER(100) :: NAME_OF_FILE
     
     NAME_OF_FILE="default.txt"
@@ -25,8 +25,9 @@ CHARACTER(100) :: NAME_OF_FILE
     call p%show
 
     theta = 0.0d0
-    dx = 0.85 * dcos(theta) * 0.5
-    dy = 0.85 * dsin(theta) * 0.5
+    l = 0.0
+    dx = l * dcos(theta) * 0.5
+    dy = l * dsin(theta) * 0.5
 
     ug=30
     !$omp parallel do private(i,j,k,ii,jj,kk,x,y,z)
@@ -38,6 +39,8 @@ CHARACTER(100) :: NAME_OF_FILE
         do i = p%of(id)%loc%is, p%of(id)%loc%ie
 
             p%of(id)%loc%vof%now(i,j,k) = 0.0d0
+            p%of(id)%loc%marker(1)%vof%now(i,j,k) = 0.0d0
+            p%of(id)%loc%marker(2)%vof%now(i,j,k) = 0.0d0
 
             do ii = 1, ug
             do jj = 1, ug
@@ -50,6 +53,14 @@ CHARACTER(100) :: NAME_OF_FILE
                 if(  sqrt((x+dx)**2+(y+dy)**2+(z-1.0)**2) <= 0.5 .or. sqrt((x-dx)**2+(y-dy)**2+(z-2.5)**2) <= 0.5 )then
                     p%of(id)%loc%vof%now(i,j,k) = p%of(id)%loc%vof%now(i,j,k) +  1.0d0/real(ug,8)**3.0d0
                 end if
+
+                if(  sqrt((x+dx)**2+(y+dy)**2+(z-1.0)**2) <= 0.5 )then
+                    p%of(id)%loc%marker(1)%vof%now(i,j,k) = p%of(id)%loc%marker(1)%vof%now(i,j,k) + 1.0d0/real(ug,8)**3.0d0
+                endif
+
+                if(  sqrt((x-dx)**2+(y-dy)**2+(z-2.5)**2) <= 0.5  )then
+                    p%of(id)%loc%marker(2)%vof%now(i,j,k) = p%of(id)%loc%marker(2)%vof%now(i,j,k) + 1.0d0/real(ug,8)**3.0d0
+                endif
                 
             end do
             end do
@@ -71,6 +82,9 @@ CHARACTER(100) :: NAME_OF_FILE
                 p%of(id)%loc%phi%now(i,j,k) = max( - sqrt((x+dx)**2+(y+dy)**2+(z-1.0)**2) + 0.5, &
                                                  & - sqrt((x-dx)**2+(y-dy)**2+(z-2.5)**2) + 0.5)
             endif
+
+            p%of(id)%loc%marker(1)%lsf%now(i,j,k) = - sqrt((x+dx)**2+(y+dy)**2+(z-1.0)**2) + 0.5
+            p%of(id)%loc%marker(2)%lsf%now(i,j,k) = - sqrt((x-dx)**2+(y-dy)**2+(z-2.5)**2) + 0.5
             
         end do
         end do
@@ -83,12 +97,21 @@ CHARACTER(100) :: NAME_OF_FILE
         call p%of(id)%bc(0,p%of(id)%loc%vel%x%now)
         call p%of(id)%bc(0,p%of(id)%loc%vel%y%now)
         call p%of(id)%bc(0,p%of(id)%loc%vel%z%now)
+
+        call p%of(id)%bc(0,p%of(id)%loc%marker(1)%lsf%now)
+        call p%of(id)%bc(0,p%of(id)%loc%marker(2)%lsf%now)
+
+        call p%of(id)%bc(0,p%of(id)%loc%marker(1)%vof%now)
+        call p%of(id)%bc(0,p%of(id)%loc%marker(2)%vof%now)
+
     enddo
     !$omp end parallel do
 
     call pt%vel%sync
     call pt%phi%sync
     call pt%vof%sync
+    call pt%marker(1)%sync
+    call pt%marker(2)%sync
 
     !call level_set_rk3_redis(0)
 
@@ -139,5 +162,17 @@ CHARACTER(100) :: NAME_OF_FILE
     p%glb%ivolv = p%glb%volv
     p%glb%imassv = p%glb%massv
     call p%sync
+
+    call p%marker_mv
+    do id = 0, p%glb%threads-1
+        do mid = 1, 2
+            p%of(id)%loc%marker(mid)%imass = p%of(id)%loc%marker(mid)%mass
+            p%of(id)%loc%marker(mid)%ivol = p%of(id)%loc%marker(mid)%vol
+            p%of(id)%loc%marker(mid)%imassv = p%of(id)%loc%marker(mid)%massv
+            p%of(id)%loc%marker(mid)%ivolv = p%of(id)%loc%marker(mid)%volv
+        enddo
+    enddo
+
+    call print_LS_info
 
 end subroutine

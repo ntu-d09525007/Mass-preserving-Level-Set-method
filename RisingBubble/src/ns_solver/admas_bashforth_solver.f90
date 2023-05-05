@@ -1,7 +1,6 @@
 subroutine ns_ab_setup
 implicit none
 
-    call ns_linearize
     call ns_ab_adv_source
     call ns_ab_diff_source
 
@@ -14,19 +13,13 @@ integer :: iter
 
 p%glb%piter=0
 
-do iter = 1, 5
-    
-    if(iter > 1) call ns_relaxation
-    call ns_ab_setup
-    call ns_ab_predictor 
+call ns_ab_setup
+call ns_ab_predictor 
 
-    call ppe_mg_solver(p%glb%iter)
-    !call ppe_sor_solver(1.0d-6)
+call ppe_mg_solver(p%glb%iter)
+!call ppe_sor_solver(1.0d-6)
 
-    call ns_check_convergence_vel
-    if( p%glb%ns_l2f < 1.0d-10 )exit
-
-enddo
+call ns_check_convergence_vel
     
 end subroutine
 

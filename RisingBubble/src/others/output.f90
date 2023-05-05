@@ -78,8 +78,8 @@ use all
 implicit none
 
     write(*,'("Divergence :",2ES15.4)')p%glb%vel_div,p%glb%vel_sdiv
-    write(*,'("L2 norm    :",ES15.4)')p%glb%ns_l2f
-    write(*,'("Linf norm  :",ES15.4)')p%glb%ns_linf
+    ! write(*,'("L2 norm    :",ES15.4)')p%glb%ns_l2f
+    ! write(*,'("Linf norm  :",ES15.4)')p%glb%ns_linf
     write(*,*)''
     write(*,'("PPE iters  :",I15)')p%glb%piter
     write(*,'("PPE error  :",ES15.4)')p%glb%ppe_linf
@@ -92,12 +92,22 @@ use all
 implicit none
 
     write(*,'("LS,  Loss of mass  (%) :",ES15.4)')100.0d0*(p%glb%imass-p%glb%mass)/p%glb%imass
+    write(*,'("LS<1>,  Loss of mass  (%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(1)%imass-p%of(0)%loc%marker(1)%mass)/p%of(0)%loc%marker(1)%imass
+    write(*,'("LS<2>,  Loss of mass  (%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(2)%imass-p%of(0)%loc%marker(2)%mass)/p%of(0)%loc%marker(2)%imass
+
     write(*,'("LS,  Loss of volume(%) :",ES15.4)')100.0d0*(p%glb%ivol-p%glb%vol)/p%glb%ivol
+    write(*,'("LS<1>,  Loss of volume  (%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(1)%ivol-p%of(0)%loc%marker(1)%vol)/p%of(0)%loc%marker(1)%ivol
+    write(*,'("LS<2>,  Loss of volume  (%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(2)%ivol-p%of(0)%loc%marker(2)%vol)/p%of(0)%loc%marker(2)%ivol
+
     write(*,'("LS,  redistance error  :",ES15.4)')p%glb%red_error
     write(*,*)''
     if(p%glb%method==3)then
         write(*,'("VOF, Loss of mass  (%) :",ES15.4)')100.0d0*(p%glb%imassv-p%glb%massv)/p%glb%imassv
+        write(*,'("VOF<1>, Loss of mass  (%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(1)%imassv-p%of(0)%loc%marker(1)%massv)/p%of(0)%loc%marker(1)%imassv
+        write(*,'("VOF<2>, Loss of mass  (%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(2)%imassv-p%of(0)%loc%marker(2)%massv)/p%of(0)%loc%marker(2)%imassv
         write(*,'("VOF, Loss of volume(%) :",ES15.4)')100.0d0*(p%glb%ivolv-p%glb%volv)/p%glb%ivolv
+        write(*,'("VOF<1>, Loss of volume(%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(1)%ivolv-p%of(0)%loc%marker(1)%volv)/p%of(0)%loc%marker(1)%ivolv
+        write(*,'("VOF<2>, Loss of volume(%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(1)%ivolv-p%of(0)%loc%marker(1)%volv)/p%of(0)%loc%marker(1)%ivolv
         write(*,*)''
     endif
 

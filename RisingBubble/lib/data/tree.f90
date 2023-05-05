@@ -30,6 +30,7 @@ procedure mg_find_error => manager_mg_find_error
 procedure mg_solve_correct => manager_mg_solve_correct
 procedure sync => manager_sync
 procedure ls_mv => manager_ls_mv
+procedure marker_mv => manager_marker_mv
 procedure ls_funs => manager_ls_funs
 procedure rho_mu => manager_rho_mu
 procedure surface_norms => manager_surface_norms
@@ -65,7 +66,6 @@ integer :: id, level
     write(*,'(A20,3ES12.3)')"L, U, T:",p%glb%L, p%glb%U, p%glb%T
     write(*,'(A20,F10.4)')"Density ratio:",p%glb%rho_12
     write(*,'(A20,F10.4)')"Viscosity ratio:",p%glb%mu_12
-    write(*,'( A20,"(",F5.2,",",F5.2,",",F5.2,")" )')"Gravity Direction:",p%glb%gx,p%glb%gy,p%glb%gz
     write(*,'(A20,L5)')"Inverse Capturing:",p%glb%inverse
     write(*,'(A20,I5,A3,I5,A3,I5)')"Grids:",p%glb%node_x,"x",p%glb%node_y,"x",p%glb%node_z
     write(*,'(A20,I5,A3,I5,A3,I5)')"Threads Grid:",p%glb%grid_x,"x",p%glb%grid_y,"x",p%glb%grid_z
@@ -437,6 +437,12 @@ do id = 0, p%glb%threads-1
     call p%of(id)%loc%velsrc%switch
     
     call p%of(id)%loc%p%switch
+
+    call p%of(id)%loc%marker(1)%lsf%switch
+    call p%of(id)%loc%marker(2)%lsf%switch
+
+    call p%of(id)%loc%marker(1)%vof%switch
+    call p%of(id)%loc%marker(2)%vof%switch
     
 enddo      
 !$omp end parallel do

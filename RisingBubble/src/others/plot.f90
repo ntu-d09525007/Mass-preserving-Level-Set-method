@@ -48,8 +48,13 @@ do id = 0, p%glb%threads-1
                            
         E_IO = VTK_DAT_XML(var_location = 'node', var_block_action = 'open')
         E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'Phi', var = p%of(id)%loc%phi%now(nx1:nx2,ny1:ny2,nz1:nz2) )
-        ! E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'Rho', var = p%of(id)%loc%rho%now(nx1:nx2,ny1:ny2,nz1:nz2) )
+        E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'Phi_1', var = p%of(id)%loc%marker(1)%lsf%now(nx1:nx2,ny1:ny2,nz1:nz2) )
+        E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'Phi_2', var = p%of(id)%loc%marker(2)%lsf%now(nx1:nx2,ny1:ny2,nz1:nz2) )
+
         E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'VOF', var = p%of(id)%loc%vof%now(nx1:nx2,ny1:ny2,nz1:nz2) )
+        E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'VOF_1', var = p%of(id)%loc%marker(1)%vof%now(nx1:nx2,ny1:ny2,nz1:nz2) )
+        E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'VOF_2', var = p%of(id)%loc%marker(2)%vof%now(nx1:nx2,ny1:ny2,nz1:nz2) )
+
         E_IO = VTK_VAR_XML(NC_NN = nn, varname = 'Velocity', varX = p%of(id)%loc%nvel%x%now(nx1:nx2,ny1:ny2,nz1:nz2),&
                                                             &varY = p%of(id)%loc%nvel%y%now(nx1:nx2,ny1:ny2,nz1:nz2),&
                                                             &varZ = p%of(id)%loc%nvel%z%now(nx1:nx2,ny1:ny2,nz1:nz2))
