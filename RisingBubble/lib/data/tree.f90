@@ -29,23 +29,12 @@ procedure mg_solve_exact => manager_mg_solve_exact
 procedure mg_find_error => manager_mg_find_error
 procedure mg_solve_correct => manager_mg_solve_correct
 procedure sync => manager_sync
-procedure ls_mv => manager_ls_mv
-procedure marker_mv => manager_marker_mv
-procedure ls_funs => manager_ls_funs
-procedure rho_mu => manager_rho_mu
-procedure surface_norms => manager_surface_norms
-procedure surface_norms2 => manager_surface_norms_sec
-procedure node_vel => manager_node_vel
-procedure curv => manager_curv
 procedure switch => manager_switch
-procedure plot => manager_plot
 end type manager
 
 contains 
 
 include './tree_multigrid.f90'
-include './tree_twophaseflows.f90'
-include './tree_plot.f90'
 
 subroutine manager_show(p)
 implicit none
@@ -385,31 +374,6 @@ integer :: i, id
  enddo
  !$omp end parallel do
  
-end subroutine
-
-subroutine manager_node_vel(p)
-implicit none
-class(manager) :: p
-integer :: id,i,j,k
-
-    !$omp parallel do private(i,j,k)
-    do id = 0, p%glb%threads-1
-        
-        do k = p%of(id)%loc%ks, p%of(id)%loc%ke
-        do j = p%of(id)%loc%js, p%of(id)%loc%je
-        do i = p%of(id)%loc%is, p%of(id)%loc%ie
-            p%of(id)%loc%nvel%x%now(i,j,k) = 0.5d0 * ( p%of(id)%loc%vel%x%now(i-1,j,k) + p%of(id)%loc%vel%x%now(i,j,k) )
-            p%of(id)%loc%nvel%y%now(i,j,k) = 0.5d0 * ( p%of(id)%loc%vel%y%now(i,j-1,k) + p%of(id)%loc%vel%y%now(i,j,k) )
-            p%of(id)%loc%nvel%z%now(i,j,k) = 0.5d0 * ( p%of(id)%loc%vel%z%now(i,j,k-1) + p%of(id)%loc%vel%z%now(i,j,k) )
-        end do
-        end do
-        end do
-    
-        call p%of(id)%nvelbc(p%of(id)%loc%nvel%x%now,p%of(id)%loc%nvel%y%now,p%of(id)%loc%nvel%z%now)
-     
-    enddo       
-    !$omp end parallel do
-
 end subroutine
 
 subroutine manager_switch(p)

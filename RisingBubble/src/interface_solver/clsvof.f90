@@ -10,8 +10,7 @@ integer(8) :: cpustart, cpuend
 
     eps = 1.0d-10
 
-    call p%surface_norms
-    call pt%normals%sync
+    call surface_norms
 
     ! x direction 
     !$omp parallel do private(i,j,k,ii,ib,isgn,alpha,beta,w,a1,a3,a4,a5,xc) 

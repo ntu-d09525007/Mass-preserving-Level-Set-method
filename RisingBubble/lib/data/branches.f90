@@ -72,7 +72,7 @@ type(interface_function), dimension(:) :: marker(2)
 type(tensor) :: vel_ten!, vor_ten, p_ten, rho_ten
 !-------------------------------------------
 type(tsolver_data) :: tdata
-type(ccd_manager) :: ccdsolvers
+type(ccd_manager), dimension(:), allocatable :: ccdsolvers
 !-------------------------------------------
 type(multigrid_root),dimension(:),allocatable :: mg
 contains
@@ -85,16 +85,13 @@ type(local)  :: loc
 contains
 procedure init => job_init
 procedure bc => job_bc
+procedure find_stag_vel => job_find_stag_vel
 procedure velbc => job_vel_bc
 procedure nvelbc => job_nvel_bc
-procedure find_stag_vel => job_find_stag_vel
-procedure find_tensor => job_find_tensor
-procedure find_gradient => job_find_gradient
 end type job
 
 contains
 
-include './branches_vector.f90'
 include './branches_velbc.f90'
 
 subroutine job_init(p,id,gx,gy,gz)
@@ -169,7 +166,13 @@ CALL P%LOC%VELSRC%ALLOC(IS,IE,JS,JE,KS,KE)
 
 ! solvers
 CALL P%LOC%tdata%ALLOC(IS,IE,JS,JE,KS,KE,P%GLB%DT,P%GLB%t_w,P%GLB%GHC)
-CALL P%LOC%ccdsolvers%init(IS,IE,JS,JE,KS,KE,P%GLB%DX,P%GLB%DY,P%GLB%DZ,P%GLB%DT)
+
+allocate( p%loc%ccdsolvers(0:p%glb%nthreads-1) )
+
+do level = 0, p%glb%nthreads-1
+    CALL P%LOC%ccdsolvers(level)%init(IS,IE,JS,JE,KS,KE,P%GLB%DX,P%GLB%DY,P%GLB%DZ,P%GLB%DT)
+enddo
+
 
 ! vortex identification
 ! call p%loc%vort%alloc(is,ie,js,je,ks,ke)

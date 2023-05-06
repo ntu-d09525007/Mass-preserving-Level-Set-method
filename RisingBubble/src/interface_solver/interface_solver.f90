@@ -112,6 +112,9 @@ end subroutine
 subroutine clsvof()
 use all
 implicit none
+integer :: id,i,j,k,mid
+real(8) :: tmp1, tmp2
+logical :: reconstruct
 
 call vof_wlic_solver
 !call level_set_symplectic_solver 

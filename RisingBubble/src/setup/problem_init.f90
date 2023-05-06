@@ -115,8 +115,7 @@ CHARACTER(100) :: NAME_OF_FILE
 
     !call level_set_rk3_redis(0)
 
-    call p%node_vel
-    call pt%nvel%sync
+    call node_vel
     call ns_init
     !---------------------------------------------------
 
@@ -156,14 +155,14 @@ CHARACTER(100) :: NAME_OF_FILE
 
     p%glb%Ev = -1.0d0
 
-    call p%ls_mv
+    call ls_mv
     p%glb%ivol = p%glb%vol
     p%glb%imass = p%glb%mass
     p%glb%ivolv = p%glb%volv
     p%glb%imassv = p%glb%massv
     call p%sync
 
-    call p%marker_mv
+    call marker_mv
     do id = 0, p%glb%threads-1
         do mid = 1, 2
             p%of(id)%loc%marker(mid)%imass = p%of(id)%loc%marker(mid)%mass

@@ -224,31 +224,49 @@ subroutine level_set_rk3_source_ccd
 use all
 !$ use omp_lib
 implicit none
-integer :: id,i,j,k
+integer :: id,i,j,k, lid
 
-!$omp parallel do private(i,j,k)
+!$omp parallel do private(i,j,k,lid)
 do id = 0, p%glb%threads-1
-
+    
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(i,j,k,lid)
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke
     do j = p%of(id)%loc%js, p%of(id)%loc%je
-        call p%of(id)%loc%ccdsolvers%x%solve("uccd",p%of(id)%loc%phi%now(:,j,k),&
+
+        lid = 0
+        !$ lid = OMP_GET_THREAD_NUM()
+
+        call p%of(id)%loc%ccdsolvers(lid)%x%solve("uccd",p%of(id)%loc%phi%now(:,j,k),&
             &p%of(id)%loc%tdata%x%s1(:,j,k),p%of(id)%loc%tdata%x%s2(:,j,k),p%of(id)%loc%nvel%x%old(:,j,k))
     end do 
     end do
+    !$omp end parallel do
     
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(i,j,k,lid)
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
-        call p%of(id)%loc%ccdsolvers%y%solve("uccd",p%of(id)%loc%phi%now(i,:,k),&
+
+        lid = 0
+        !$ lid = OMP_GET_THREAD_NUM()
+
+        call p%of(id)%loc%ccdsolvers(lid)%y%solve("uccd",p%of(id)%loc%phi%now(i,:,k),&
             p%of(id)%loc%tdata%y%s1(i,:,k),p%of(id)%loc%tdata%y%s2(i,:,k),p%of(id)%loc%nvel%y%old(i,:,k))
     end do
     end do
-    
+    !$omp end parallel do
+
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(i,j,k,lid)
     do j = p%of(id)%loc%js, p%of(id)%loc%je
     do i = p%of(id)%loc%is, p%of(id)%loc%ie
-        call p%of(id)%loc%ccdsolvers%z%solve("uccd",p%of(id)%loc%phi%now(i,j,:),&
+
+        lid = 0
+        !$ lid = OMP_GET_THREAD_NUM()
+
+        call p%of(id)%loc%ccdsolvers(lid)%z%solve("uccd",p%of(id)%loc%phi%now(i,j,:),&
             p%of(id)%loc%tdata%z%s1(i,j,:),p%of(id)%loc%tdata%z%s2(i,j,:),p%of(id)%loc%nvel%z%old(i,j,:))
     end do
     end do
+    !$omp end parallel do
     
     !$omp parallel do num_threads(p%glb%nthreads) private(i,j,k)
     do k = p%of(id)%loc%ks, p%of(id)%loc%ke

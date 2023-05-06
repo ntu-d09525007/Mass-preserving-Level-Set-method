@@ -160,7 +160,7 @@ integer :: id,i,j,k
 real(8) :: tgt, src
 real(8) :: error, errorv
 
-call p%ls_mv
+call ls_mv
 
 !$omp parallel do private(i,j,k,src,tgt) reduction(+:error, errorv)
 do id = 0, p%glb%threads-1
@@ -221,18 +221,55 @@ end function
 
 subroutine energy_and_momentum()
 use all
+!$ use omp_lib
 implicit none
-integer :: i,j,k,id
+integer :: i,j,k,id,lid
 real(8) :: A, Q, lQ, Ke, lKe, dv, Po
 real(8) :: ux, uy, uz, vx, vy, vz, wx, wy, wz
 real(8) :: px, py, pz, v, marker
 real(8) :: xc, yc, zc
 
-call p%rho_mu
+call rho_mu
 
-!$omp parallel do 
+!$omp parallel do private(i,j,k,lid)
 do id = 0, p%glb%threads-1
-    call p%of(id)%find_tensor(p%of(id)%loc%vel_ten, p%of(id)%loc%nvel%x%now, p%of(id)%loc%nvel%y%now, p%of(id)%loc%nvel%z%now)
+    
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(i,j,k,lid)
+    do k = p%of(id)%loc%ks, p%of(id)%loc%ke
+    do j = p%of(id)%loc%js, p%of(id)%loc%je
+        lid = 0
+        !$ lid = OMP_GET_THREAD_NUM()
+        call p%of(id)%loc%ccdsolvers(lid)%x%solve("ccd",p%of(id)%loc%nvel%x%now(:,j,k),p%of(id)%loc%vel_ten%xx(:,j,k),p%of(id)%loc%vel_ten%xxx(:,j,k))
+        call p%of(id)%loc%ccdsolvers(lid)%x%solve("ccd",p%of(id)%loc%nvel%y%now(:,j,k),p%of(id)%loc%vel_ten%yx(:,j,k),p%of(id)%loc%vel_ten%yxx(:,j,k))
+        call p%of(id)%loc%ccdsolvers(lid)%x%solve("ccd",p%of(id)%loc%nvel%z%now(:,j,k),p%of(id)%loc%vel_ten%zx(:,j,k),p%of(id)%loc%vel_ten%zxx(:,j,k))
+    enddo
+    enddo
+    !$omp end parallel do
+
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(i,j,k,lid)
+    do k = p%of(id)%loc%ks, p%of(id)%loc%ke
+    do i = p%of(id)%loc%is, p%of(id)%loc%ie
+        lid = 0
+        !$ lid = OMP_GET_THREAD_NUM()
+        call p%of(id)%loc%ccdsolvers(lid)%y%solve("ccd",p%of(id)%loc%nvel%x%now(i,:,k),p%of(id)%loc%vel_ten%xy(i,:,k),p%of(id)%loc%vel_ten%xyy(i,:,k))
+        call p%of(id)%loc%ccdsolvers(lid)%y%solve("ccd",p%of(id)%loc%nvel%y%now(i,:,k),p%of(id)%loc%vel_ten%yy(i,:,k),p%of(id)%loc%vel_ten%yyy(i,:,k))
+        call p%of(id)%loc%ccdsolvers(lid)%y%solve("ccd",p%of(id)%loc%nvel%z%now(i,:,k),p%of(id)%loc%vel_ten%zy(i,:,k),p%of(id)%loc%vel_ten%zyy(i,:,k))
+    enddo
+    enddo
+    !$omp end parallel do
+
+    !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(i,j,k,lid)
+    do j = p%of(id)%loc%js, p%of(id)%loc%je
+    do i = p%of(id)%loc%is, p%of(id)%loc%ie
+        lid = 0
+        !$ lid = OMP_GET_THREAD_NUM()
+        call p%of(id)%loc%ccdsolvers(lid)%z%solve("ccd",p%of(id)%loc%nvel%x%now(i,j,:),p%of(id)%loc%vel_ten%xz(i,j,:),p%of(id)%loc%vel_ten%xzz(i,j,:))
+        call p%of(id)%loc%ccdsolvers(lid)%z%solve("ccd",p%of(id)%loc%nvel%y%now(i,j,:),p%of(id)%loc%vel_ten%yz(i,j,:),p%of(id)%loc%vel_ten%yzz(i,j,:))
+        call p%of(id)%loc%ccdsolvers(lid)%z%solve("ccd",p%of(id)%loc%nvel%z%now(i,j,:),p%of(id)%loc%vel_ten%zz(i,j,:),p%of(id)%loc%vel_ten%zzz(i,j,:))
+    enddo
+    enddo
+    !$omp end parallel do
+
 enddo
 !$omp end parallel do
 

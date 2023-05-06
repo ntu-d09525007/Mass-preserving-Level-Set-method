@@ -92,7 +92,7 @@ real(8) :: grad
     !$omp end parallel do
     
     call pt%phi%sync
-    call p%ls_funs
+    call ls_funs
 
     !$omp parallel do private(i,j,k)
     do id = 0, p%glb%threads-1
@@ -395,7 +395,7 @@ if( btn==0 )then
     
 endif
 
-call p%ls_funs
+call ls_funs
 
 !$omp parallel do private(i,j,k,lam)
 do id = 0, p%glb%threads-1

@@ -6,13 +6,9 @@ integer(8) :: cpustart, cpuend
 call system_clock(cpustart)
 
 call ns_init
-
 call ns_ab_solver
-
 call ns_check_convergence_div
-
-call p%node_vel
-call pt%nvel%sync
+call node_vel
 
 call system_clock(cpuend)
 p%glb%ns = p%glb%ns + real(cpuend-cpustart,kind=8)/real(p%glb%cpurate,kind=8)
@@ -25,9 +21,8 @@ use all
 implicit none
 integer :: id,i,j,k
 
-call p%rho_mu
-call p%curv
-call pt%normals%sync
+call rho_mu
+call curv
     
 end subroutine
 
@@ -136,6 +131,33 @@ l2f = dsqrt( l2f / (3.0d0*p%glb%node_x*p%glb%node_y*p%glb%node_z) )
 p%glb%ns_linf = linf
 p%glb%ns_l2f = l2f
     
+end subroutine
+
+subroutine node_vel
+use all
+implicit none
+integer :: id,i,j,k
+
+    !$omp parallel do private(i,j,k)
+    do id = 0, p%glb%threads-1
+        
+        !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k)
+        do k = p%of(id)%loc%ks, p%of(id)%loc%ke
+        do j = p%of(id)%loc%js, p%of(id)%loc%je
+        do i = p%of(id)%loc%is, p%of(id)%loc%ie
+            p%of(id)%loc%nvel%x%now(i,j,k) = 0.5d0 * ( p%of(id)%loc%vel%x%now(i-1,j,k) + p%of(id)%loc%vel%x%now(i,j,k) )
+            p%of(id)%loc%nvel%y%now(i,j,k) = 0.5d0 * ( p%of(id)%loc%vel%y%now(i,j-1,k) + p%of(id)%loc%vel%y%now(i,j,k) )
+            p%of(id)%loc%nvel%z%now(i,j,k) = 0.5d0 * ( p%of(id)%loc%vel%z%now(i,j,k-1) + p%of(id)%loc%vel%z%now(i,j,k) )
+        end do
+        end do
+        end do
+        !$omp end parallel do
+     
+    enddo       
+    !$omp end parallel do
+
+    call nvel_bc
+
 end subroutine
 
 

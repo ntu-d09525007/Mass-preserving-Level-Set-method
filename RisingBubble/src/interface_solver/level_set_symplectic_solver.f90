@@ -72,7 +72,7 @@ subroutine level_set_source(btn)
 use all 
 !$ use omp_lib
 implicit none
-integer :: i,j,k,id
+integer :: i,j,k,id,lid
 logical :: btn
 
     !$omp parallel do private(i,j,k)
@@ -87,25 +87,31 @@ logical :: btn
     
     call pt%tdatax%sync
     
-    !$omp parallel do private(i,j,k)
+    !$omp parallel do private(i,j,k,lid)
     do id = 0, p%glb%threads-1
         
         ! calculate x derivatives
+        !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(i,j,k,lid)
         do k = p%of(id)%loc%ks-p%glb%ghc, p%of(id)%loc%ke+p%glb%ghc
         do j = p%of(id)%loc%js-p%glb%ghc, p%of(id)%loc%je+p%glb%ghc
+
+            lid = 0
+            !$ lid = OMP_GET_THREAD_NUM()
         
-            call p%of(id)%loc%ccdsolvers%x%solve("uccd",&
+            call p%of(id)%loc%ccdsolvers(lid)%x%solve("uccd",&
                 &p%of(id)%loc%tdata%x%s1(:,j,k),p%of(id)%loc%tdata%x%ss1(:,j,k),p%of(id)%loc%nvel%x%tmp(:,j,k),p%of(id)%loc%nvel%x%old(:,j,k))
                                         
-            call p%of(id)%loc%ccdsolvers%x%solve("uccd",&
+            call p%of(id)%loc%ccdsolvers(lid)%x%solve("uccd",&
                 &p%of(id)%loc%tdata%x%s2(:,j,k),p%of(id)%loc%tdata%x%ss2(:,j,k),p%of(id)%loc%nvel%x%tmp(:,j,k),p%of(id)%loc%nvel%x%old(:,j,k))
                                         
-            call p%of(id)%loc%ccdsolvers%x%solve("uccd",&
+            call p%of(id)%loc%ccdsolvers(lid)%x%solve("uccd",&
                &p%of(id)%loc%tdata%x%s3(:,j,k),p%of(id)%loc%tdata%x%ss3(:,j,k),p%of(id)%loc%nvel%x%tmp(:,j,k),p%of(id)%loc%nvel%x%old(:,j,k))
             
         end do
         end do
+        !$omp end parallel do
         
+        !$omp parallel do private(i,j,k) collapse(3) num_threads(p%glb%nthreads)
         do k = p%of(id)%loc%ks-p%glb%ghc, p%of(id)%loc%ke+p%glb%ghc
         do j = p%of(id)%loc%js-p%glb%ghc, p%of(id)%loc%je+p%glb%ghc
         do i = p%of(id)%loc%is-p%glb%ghc, p%of(id)%loc%ie+p%glb%ghc
@@ -117,22 +123,29 @@ logical :: btn
         end do
         end do
         end do
+        !$omp end parallel do
         
         ! calculate y derivatives
+        !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(i,j,k,lid)
         do k = p%of(id)%loc%ks-p%glb%ghc, p%of(id)%loc%ke+p%glb%ghc
         do i = p%of(id)%loc%is-p%glb%ghc, p%of(id)%loc%ie+p%glb%ghc
             
-            call p%of(id)%loc%ccdsolvers%y%solve("uccd",&
+            lid = 0
+            !$ lid = OMP_GET_THREAD_NUM()
+
+            call p%of(id)%loc%ccdsolvers(lid)%y%solve("uccd",&
                 &p%of(id)%loc%tdata%x%s1(i,:,k),p%of(id)%loc%tdata%x%ss1(i,:,k),p%of(id)%loc%nvel%y%tmp(i,:,k),p%of(id)%loc%nvel%y%old(i,:,k))
                                         
-            call p%of(id)%loc%ccdsolvers%y%solve("uccd",&
+            call p%of(id)%loc%ccdsolvers(lid)%y%solve("uccd",&
                 &p%of(id)%loc%tdata%x%s2(i,:,k),p%of(id)%loc%tdata%x%ss2(i,:,k),p%of(id)%loc%nvel%y%tmp(i,:,k),p%of(id)%loc%nvel%y%old(i,:,k))
                                         
-            call p%of(id)%loc%ccdsolvers%y%solve("uccd",&
+            call p%of(id)%loc%ccdsolvers(lid)%y%solve("uccd",&
                &p%of(id)%loc%tdata%x%s3(i,:,k),p%of(id)%loc%tdata%x%ss3(i,:,k),p%of(id)%loc%nvel%y%tmp(i,:,k),p%of(id)%loc%nvel%y%old(i,:,k))
         end do
         end do
+        !$omp end parallel do
         
+        !$omp parallel do private(i,j,k) num_threads(p%glb%nthreads)
         do k = p%of(id)%loc%ks-p%glb%ghc, p%of(id)%loc%ke+p%glb%ghc
         do j = p%of(id)%loc%js-p%glb%ghc, p%of(id)%loc%je+p%glb%ghc
         do i = p%of(id)%loc%is-p%glb%ghc, p%of(id)%loc%ie+p%glb%ghc
@@ -144,22 +157,29 @@ logical :: btn
         end do
         end do
         end do
+        !$omp end parallel do
 
         ! calculate z derivatives
+        !$omp parallel do num_threads(p%glb%nthreads) collapse(2) private(i,j,k,lid)
         do j = p%of(id)%loc%js-p%glb%ghc, p%of(id)%loc%je+p%glb%ghc
         do i = p%of(id)%loc%is-p%glb%ghc, p%of(id)%loc%ie+p%glb%ghc
             
-            call p%of(id)%loc%ccdsolvers%z%solve("uccd",&
+            lid = 0
+            !$ lid = OMP_GET_THREAD_NUM()
+
+            call p%of(id)%loc%ccdsolvers(lid)%z%solve("uccd",&
                     &p%of(id)%loc%tdata%x%s1(i,j,:),p%of(id)%loc%tdata%x%ss1(i,j,:),p%of(id)%loc%nvel%z%tmp(i,j,:),p%of(id)%loc%nvel%z%old(i,j,:))
 
-            call p%of(id)%loc%ccdsolvers%z%solve("uccd",&
+            call p%of(id)%loc%ccdsolvers(lid)%z%solve("uccd",&
                     &p%of(id)%loc%tdata%x%s2(i,j,:),p%of(id)%loc%tdata%x%ss2(i,j,:),p%of(id)%loc%nvel%z%tmp(i,j,:),p%of(id)%loc%nvel%z%old(i,j,:))
 
-            call p%of(id)%loc%ccdsolvers%z%solve("uccd",&
+            call p%of(id)%loc%ccdsolvers(lid)%z%solve("uccd",&
                    &p%of(id)%loc%tdata%x%s3(i,j,:),p%of(id)%loc%tdata%x%ss3(i,j,:),p%of(id)%loc%nvel%z%tmp(i,j,:),p%of(id)%loc%nvel%z%old(i,j,:))
         end do
         end do
+        !$omp end parallel do
         
+        !$omp parallel do private(i,j,k) num_threads(p%glb%nthreads)
         do k = p%of(id)%loc%ks-p%glb%ghc, p%of(id)%loc%ke+p%glb%ghc
         do j = p%of(id)%loc%js-p%glb%ghc, p%of(id)%loc%je+p%glb%ghc
         do i = p%of(id)%loc%is-p%glb%ghc, p%of(id)%loc%ie+p%glb%ghc
@@ -171,6 +191,7 @@ logical :: btn
         end do
         end do
         end do
+        !$omp end parallel do
     
     enddo
     !$omp end parallel do

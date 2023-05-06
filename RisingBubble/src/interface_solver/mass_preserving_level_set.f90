@@ -7,9 +7,8 @@ real(8) :: lam, plam
 
 do iter = 1, 20
     
-    call p%surface_norms
-    call pt%normals%sync
-    call p%ls_mv()
+    call surface_norms
+    call ls_mv
     
     lam = 0.0_8
     

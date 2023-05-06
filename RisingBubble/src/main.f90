@@ -30,8 +30,8 @@ do
     call ns_solver
     call plot
 
-    call p%ls_mv
-    call p%marker_mv
+    call ls_mv
+    call marker_mv
     call output 
     if( mod(p%glb%iter,5)==0 )then
         write(*,*)"========================================="

@@ -11,7 +11,7 @@ call system_clock(cpustart)
 
 call ppe_mg_solver_init
 
-do outiter = 1, 3
+do outiter = 1, 1
     
     if( outiter > 1)then
         call ppe_mg_solver_src(input, 1.5d0)
