@@ -46,7 +46,7 @@ real(8) :: btn_sf, btn_g
 real(8) :: ls_adv, ls_red, ppe, ns, syn
 real(8),dimension(:,:,:),allocatable :: x, y, z
 integer,allocatable :: id(:,:,:)
-logical :: xper, yper, zper, inverse
+logical :: xper, yper, zper, inverse, merged
 end type global
 
 type interface_function

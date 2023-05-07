@@ -346,6 +346,8 @@ real(8) :: kh,ap
     p%glb%ppe    = 0.0d0
     p%glb%ns     = 0.0d0
     p%glb%syn    = 0.0d0
+
+    p%glb%merged = .false.
     
     mag = dsqrt(p%glb%gx**2.0d0+p%glb%gy**2.0d0+p%glb%gz**2.0d0)
     
