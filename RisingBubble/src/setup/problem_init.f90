@@ -172,6 +172,6 @@ CHARACTER(100) :: NAME_OF_FILE
         enddo
     enddo
 
-    p%glb%merged = .true.
+    p%glb%merged = .false.
 
 end subroutine
