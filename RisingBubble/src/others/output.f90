@@ -11,8 +11,12 @@ if( p%glb%iter == 1)then
 endif
 
 ! level set method, loss of volume/mass in percentage
-write(p%fil%mass,'(3ES15.4)')p%glb%time,100.0d0*(p%glb%imass-p%glb%mass)/p%glb%imass,100.0d0*(p%glb%imassv-p%glb%massv)/p%glb%imassv
-write(p%fil%vol,'(3ES15.4)')p%glb%time,100.0d0*(p%glb%ivol-p%glb%vol)/p%glb%ivol,100.0d0*(p%glb%ivolv-p%glb%volv)/p%glb%ivolv
+write(p%fil%mass,'(7ES15.4)')p%glb%time,100.0d0*(p%glb%mass-p%glb%imass)/p%glb%imass,100.0d0*(p%glb%massv-p%glb%imassv)/p%glb%imassv, &
+    & 100.0d0*(p%of(0)%loc%marker(1)%mass-p%of(0)%loc%marker(1)%imass)/p%of(0)%loc%marker(1)%imass, &
+    & 100.0d0*(p%of(0)%loc%marker(2)%mass-p%of(0)%loc%marker(2)%imass)/p%of(0)%loc%marker(2)%imass
+write(p%fil%vol,'(7ES15.4)')p%glb%time,100.0d0*(p%glb%vol-p%glb%ivol)/p%glb%ivol,100.0d0*(p%glb%volv-p%glb%ivolv)/p%glb%ivolv, &
+    & 100.0d0*(p%of(0)%loc%marker(1)%vol-p%of(0)%loc%marker(1)%ivol)/p%of(0)%loc%marker(1)%ivol, &
+    & 100.0d0*(p%of(0)%loc%marker(2)%vol-p%of(0)%loc%marker(2)%ivol)/p%of(0)%loc%marker(2)%ivol
 
 p%glb%loss_mass_avg = p%glb%loss_mass_avg + abs(p%glb%imass-p%glb%mass)/p%glb%imass
 p%glb%loss_vol_avg = p%glb%loss_vol_avg + abs(p%glb%ivol-p%glb%vol)/p%glb%ivol
@@ -30,6 +34,7 @@ call energy_and_momentum
 write(p%fil%energy, '(7ES15.4)')p%glb%time, p%glb%ek, p%glb%ep, p%glb%es, p%glb%ev, p%glb%ek+p%glb%es+p%glb%ep+p%glb%ev, p%glb%ek0+p%glb%ep0+p%glb%es0
 write(p%fil%momentum, '(7ES15.4)')p%glb%time, p%glb%px, p%glb%py, p%glb%pz
 write(p%fil%position, '(7ES15.4)')p%glb%time, p%glb%xc, p%glb%yc, p%glb%zc
+
 ! !Drybed 
 ! damfront = 0.0d0; damh=0.0d0
 ! !$omp parallel do private(i,j,k), reduction(max:damfront, damh), private(r)
@@ -91,23 +96,31 @@ subroutine print_LS_info()
 use all
 implicit none
 
-    write(*,'("LS,  Loss of mass  (%) :",ES15.4)')100.0d0*(p%glb%imass-p%glb%mass)/p%glb%imass
-    write(*,'("LS<1>,  Loss of mass  (%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(1)%imass-p%of(0)%loc%marker(1)%mass)/p%of(0)%loc%marker(1)%imass
-    write(*,'("LS<2>,  Loss of mass  (%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(2)%imass-p%of(0)%loc%marker(2)%mass)/p%of(0)%loc%marker(2)%imass
+    write(*,'("LS,  Loss of mass  (%) :",ES15.4)')100.0d0*(p%glb%mass-p%glb%imass)/p%glb%imass
+    if( .not. p%glb%merged)then
+        write(*,'("LS<1>,  Loss of mass  (%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(1)%mass-p%of(0)%loc%marker(1)%imass)/p%of(0)%loc%marker(1)%imass
+        write(*,'("LS<2>,  Loss of mass  (%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(2)%mass-p%of(0)%loc%marker(2)%imass)/p%of(0)%loc%marker(2)%imass
+    endif
 
     write(*,'("LS,  Loss of volume(%) :",ES15.4)')100.0d0*(p%glb%ivol-p%glb%vol)/p%glb%ivol
-    write(*,'("LS<1>,  Loss of volume  (%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(1)%ivol-p%of(0)%loc%marker(1)%vol)/p%of(0)%loc%marker(1)%ivol
-    write(*,'("LS<2>,  Loss of volume  (%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(2)%ivol-p%of(0)%loc%marker(2)%vol)/p%of(0)%loc%marker(2)%ivol
+    if( .not. p%glb%merged )then
+        write(*,'("LS<1>,  Loss of volume  (%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(1)%vol-p%of(0)%loc%marker(1)%ivol)/p%of(0)%loc%marker(1)%ivol
+        write(*,'("LS<2>,  Loss of volume  (%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(2)%vol-p%of(0)%loc%marker(2)%ivol)/p%of(0)%loc%marker(2)%ivol
+    endif
 
     write(*,'("LS,  redistance error  :",ES15.4)')p%glb%red_error
     write(*,*)''
     if(p%glb%method==3)then
-        write(*,'("VOF, Loss of mass  (%) :",ES15.4)')100.0d0*(p%glb%imassv-p%glb%massv)/p%glb%imassv
-        write(*,'("VOF<1>, Loss of mass  (%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(1)%imassv-p%of(0)%loc%marker(1)%massv)/p%of(0)%loc%marker(1)%imassv
-        write(*,'("VOF<2>, Loss of mass  (%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(2)%imassv-p%of(0)%loc%marker(2)%massv)/p%of(0)%loc%marker(2)%imassv
-        write(*,'("VOF, Loss of volume(%) :",ES15.4)')100.0d0*(p%glb%ivolv-p%glb%volv)/p%glb%ivolv
-        write(*,'("VOF<1>, Loss of volume(%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(1)%ivolv-p%of(0)%loc%marker(1)%volv)/p%of(0)%loc%marker(1)%ivolv
-        write(*,'("VOF<2>, Loss of volume(%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(1)%ivolv-p%of(0)%loc%marker(1)%volv)/p%of(0)%loc%marker(1)%ivolv
+        write(*,'("VOF, Loss of mass  (%) :",ES15.4)')100.0d0*(p%glb%massv-p%glb%imassv)/p%glb%imassv
+        if( .not. p%glb%merged )then
+            write(*,'("VOF<1>, Loss of mass  (%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(1)%massv-p%of(0)%loc%marker(1)%imassv)/p%of(0)%loc%marker(1)%imassv
+            write(*,'("VOF<2>, Loss of mass  (%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(2)%massv-p%of(0)%loc%marker(2)%imassv)/p%of(0)%loc%marker(2)%imassv
+        endif
+        write(*,'("VOF, Loss of volume(%) :",ES15.4)')100.0d0*(p%glb%volv-p%glb%ivolv)/p%glb%ivolv
+        if( .not. p%glb%merged )then
+            write(*,'("VOF<1>, Loss of volume(%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(1)%volv-p%of(0)%loc%marker(1)%ivolv)/p%of(0)%loc%marker(1)%ivolv
+            write(*,'("VOF<2>, Loss of volume(%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(1)%volv-p%of(0)%loc%marker(1)%ivolv)/p%of(0)%loc%marker(1)%ivolv
+        endif
         write(*,*)''
     endif
 

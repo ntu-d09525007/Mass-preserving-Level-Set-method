@@ -87,72 +87,85 @@ implicit none
 integer :: i, j, k, id, mid
 real(8) :: mass, vol, massv, volv, dv, rho, marker, x, pi
 
-dv = p%glb%dx * p%glb%dy * p%glb%dz
-pi = dacos(-1.0d0)
+if( p%glb%merged )then
 
-do mid = 1, 2
-    
-    mass = 0.0d0
-    massv= 0.0d0    
-    vol  = 0.0d0
-    volv = 0.0d0
-
-    !$omp parallel do private(i,j,k,rho,marker,x), reduction(+:mass,vol,massv,volv)    
     do id = 0, p%glb%threads-1
+        p%of(id)%loc%marker(mid)%mass = -1.0
+        p%of(id)%loc%marker(mid)%vol = -1.0
+        p%of(id)%loc%marker(mid)%massv = -1.0
+        p%of(id)%loc%marker(mid)%volv = -1.0
+    enddo
 
-        !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k,rho,marker,x), reduction(+:mass,vol,massv,volv)    
-        do k = p%of(id)%loc%ks, p%of(id)%loc%ke
-        do j = p%of(id)%loc%js, p%of(id)%loc%je
-        do i = p%of(id)%loc%is, p%of(id)%loc%ie
+else
 
-            x = p%of(id)%loc%marker(mid)%lsf%now(i,j,k) / p%glb%ls_wid
+    dv = p%glb%dx * p%glb%dy * p%glb%dz
+    pi = dacos(-1.0d0)
 
-            if( x > 1.0 - 1.0d-10)then
-                marker = 1.0
-            else if( x < -1.0 + 1.0d-10)then
-                marker = 0.0d0
-            else
-                marker = 0.5_8 * (1.0_8 + x + dsin(pi*x) / pi )
-            endif
+    do mid = 1, 2
+        
+        mass = 0.0d0
+        massv= 0.0d0    
+        vol  = 0.0d0
+        volv = 0.0d0
 
-            if( .not. p%glb%inverse ) then
-                rho = marker + p%glb%rho_12 * (1.0_8 - marker )
-            else
-                rho = marker * p%glb%rho_12 + (1.0_8 - marker )
-            endif
+        !$omp parallel do private(i,j,k,rho,marker,x), reduction(+:mass,vol,massv,volv)    
+        do id = 0, p%glb%threads-1
 
-            mass = mass + rho * marker * dv
-            vol = vol + marker * dv
+            !$omp parallel do num_threads(p%glb%nthreads) collapse(3) private(i,j,k,rho,marker,x), reduction(+:mass,vol,massv,volv)    
+            do k = p%of(id)%loc%ks, p%of(id)%loc%ke
+            do j = p%of(id)%loc%js, p%of(id)%loc%je
+            do i = p%of(id)%loc%is, p%of(id)%loc%ie
 
-            !-------------------------------------------------------
+                x = p%of(id)%loc%marker(mid)%lsf%now(i,j,k) / p%glb%ls_wid
 
-            marker = p%of(id)%loc%marker(mid)%vof%now(i,j,k)
+                if( x > 1.0 - 1.0d-10)then
+                    marker = 1.0
+                else if( x < -1.0 + 1.0d-10)then
+                    marker = 0.0d0
+                else
+                    marker = 0.5_8 * (1.0_8 + x + dsin(pi*x) / pi )
+                endif
 
-            if( .not. p%glb%inverse ) then
-                rho = marker + p%glb%rho_12 * (1.0_8 - marker )
-            else
-                rho = marker * p%glb%rho_12 + (1.0_8 - marker )
-            endif
+                if( .not. p%glb%inverse ) then
+                    rho = marker + p%glb%rho_12 * (1.0_8 - marker )
+                else
+                    rho = marker * p%glb%rho_12 + (1.0_8 - marker )
+                endif
 
-            massv = massv + rho * marker * dv
-            volv = volv + marker * dv
+                mass = mass + rho * marker * dv
+                vol = vol + marker * dv
 
-        enddo
-        enddo
+                !-------------------------------------------------------
+
+                marker = p%of(id)%loc%marker(mid)%vof%now(i,j,k)
+
+                if( .not. p%glb%inverse ) then
+                    rho = marker + p%glb%rho_12 * (1.0_8 - marker )
+                else
+                    rho = marker * p%glb%rho_12 + (1.0_8 - marker )
+                endif
+
+                massv = massv + rho * marker * dv
+                volv = volv + marker * dv
+
+            enddo
+            enddo
+            enddo
+            !$omp end parallel do
+
         enddo
         !$omp end parallel do
 
-    enddo
-    !$omp end parallel do
+        do id = 0, p%glb%threads-1
+            p%of(id)%loc%marker(mid)%mass = mass
+            p%of(id)%loc%marker(mid)%vol = vol
+            p%of(id)%loc%marker(mid)%massv = massv
+            p%of(id)%loc%marker(mid)%volv = volv
+        enddo
 
-    do id = 0, p%glb%threads-1
-        p%of(id)%loc%marker(mid)%mass = mass
-        p%of(id)%loc%marker(mid)%vol = vol
-        p%of(id)%loc%marker(mid)%massv = massv
-        p%of(id)%loc%marker(mid)%volv = volv
     enddo
-
-enddo
+    
+endif
 
 end subroutine
 

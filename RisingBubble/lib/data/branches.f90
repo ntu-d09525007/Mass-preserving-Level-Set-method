@@ -16,7 +16,8 @@ integer :: num_of_plots
 integer :: ug ! grid per unit length
 integer :: ghc ! ghost cell
 integer :: ubc(2), vbc(2), wbc(2)
-integer :: pid, iter, piter
+integer :: pid, iter, piter, t2red
+integer :: btn_sf, btn_g
 integer(8) :: cpurate
 real(8) :: xstart, xend, ystart, yend, zstart, zend
 real(8) :: time, t2s, t2p ! time to stop/plot
@@ -42,7 +43,6 @@ real(8) :: mu_1, mu_2, rho_1, rho_2
 real(8) :: mu_12, rho_12
 real(8) :: red_error
 real(8) :: vel_div, vel_sdiv, ns_linf, ns_l2f, ppe_linf
-real(8) :: btn_sf, btn_g
 real(8) :: ls_adv, ls_red, ppe, ns, syn
 real(8),dimension(:,:,:),allocatable :: x, y, z
 integer,allocatable :: id(:,:,:)

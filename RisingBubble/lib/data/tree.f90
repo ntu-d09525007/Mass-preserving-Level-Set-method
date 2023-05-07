@@ -118,7 +118,7 @@ integer :: x,y,z,inverse
  read(526,*)
  read(526,*)p%glb%zstart, p%glb%zend
  read(526,*)
- read(526,*)p%glb%t2s, p%glb%t2p
+ read(526,*)p%glb%t2s, p%glb%t2p, p%glb%t2red
  read(526,*)
  read(526,*)p%glb%dt, p%glb%rdt
  read(526,*)
@@ -198,11 +198,11 @@ real(8) :: kh,ap
     
     p%fil%mass = 15
     open(unit=p%fil%mass,file="./out/"//trim(p%glb%name)//"_MassLoss.plt")
-    write(p%fil%mass,*)'variables = "T" "LS" "VOF" '
+    write(p%fil%mass,*)'variables = "T" "LS" "VOF" "B1" "B2" '
 
     p%fil%vol = 16
     open(unit=p%fil%vol,file="./out/"//trim(p%glb%name)//"_VolumeLoss.plt")
-    write(p%fil%vol,*)'variables = "T" "LS" "VOF" '
+    write(p%fil%vol,*)'variables = "T" "LS" "VOF" "B1" "B2" '
 
     p%fil%energy = 17
     open(unit=p%fil%energy,file="./out/"//trim(p%glb%name)//"_Energy.plt")
@@ -348,6 +348,8 @@ real(8) :: kh,ap
     p%glb%syn    = 0.0d0
 
     p%glb%merged = .false.
+
+    if( p%glb%t2red < 0) p%glb%t2red = int( p%glb%t2s / p%glb%dt ) + 1
     
     mag = dsqrt(p%glb%gx**2.0d0+p%glb%gy**2.0d0+p%glb%gz**2.0d0)
     
