@@ -21,9 +21,9 @@ ooo Range of domain in Y direction
 ooo Range of domain in Z direction
 0.0         8.0
 ooo Time to stop / plot / redistance
-10.0        0.1        20
+10.0        0.1        10
 ooo Crount number ( advection / redistance )
-0.01        0.5
+0.005       0.1
 ooo PPE iteration ( tolerance / w1 / w2 / valve )
 10.0    0.5     0.5     4.0
 ooo SRK6 iteration ( tolerance / w )
