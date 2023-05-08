@@ -1,0 +1,60 @@
+ooo Method to capture interface ( LS / MPLS / CLSVOF ) 
+2
+ooo Name of the problem 
+Dambreak
+ooo Dimension of threads grid in X, Y, Z direction
+5 1 2
+ooo Nested OpenMP threads
+2
+ooo Domain splits for plotting (Increase if stack-overflow)
+2
+ooo Multigrid level
+6
+ooo Cells per unit length 
+32
+ooo Number of ghost cell
+3
+ooo Range of domain in X direction
+0.0        5.0
+ooo Range of domain in Y direction
+0.0        1.0
+ooo Range of domain in Z direction
+0.0        2.0
+ooo Time to stop / plot / redistance
+10.0        0.1        10
+ooo Crount number ( advection / redistance )
+0.01        0.1
+ooo PPE iteration ( tolerance / w1 / w2 / valve )
+10.0    0.5     0.5     4.0
+ooo SRK6 iteration ( tolerance / w )
+10.0    0.5 
+ooo Level set interface width 
+1.5
+ooo Problem parameters ( Prescribed / L / L+U / L+T / U+T / Wave study )
+2
+ooo Density / Viscosity of fluid 1 ( phi > 0 )
+995.0       0.0007972
+ooo Density / Viscosity of fluid 2 ( phi < 0 )
+1.17        0.00001846
+ooo Surface tension of fluid 1, 2 / Using ?
+0.078       1
+ooo Gravity / Using ?
+9.81        1
+ooo Gravity direction ( no need normalize)
+0.0     0.0     -1.0
+ooo Characteristic Length, Velocity, Time
+0.05715     2.0     0.1
+ooo Dimensionless parameters ( Re, Fr, We )  !!! We should not be zero
+67.27       1.0     16.0
+ooo Density / Viscosity ratio of fluid 1, 2
+0.001       0.01
+ooo Inverse Marker function
+0
+ooo Velocity boundary condition in X direction ( no-slip / slip / non-reflective )
+1 1
+ooo Velocity boundary condition in Y direction ( no-slip / slip / non-reflective )
+1 1
+ooo Velocity boundary condition in Z direction ( no-slip / slip / non-reflective )
+1 1
+ooo Periodic ( X, Y, Z )
+0   0   0
