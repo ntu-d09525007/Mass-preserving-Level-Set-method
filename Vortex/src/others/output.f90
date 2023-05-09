@@ -213,6 +213,7 @@ else
     write(456,*)"Method: CLSVOF"
 endif
 
+write(465,*)"Density Ratio:", p%glb%rho_12
 write(456,*)"Nx :", p%glb%node_x
 
 if(p%glb%method == 3)then
