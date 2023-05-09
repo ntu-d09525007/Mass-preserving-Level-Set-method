@@ -191,7 +191,7 @@ do id = 0, p%glb%threads-1
 
         !vof
         src = p%of(id)%loc%vof%tmp2(i,j,k)
-        tgt = p%of(id)%loc%phi%now(i,j,k)
+        tgt = p%of(id)%loc%vof%now(i,j,k)
 
         errorv = errorv + abs(src-tgt)
 
@@ -216,8 +216,8 @@ endif
 write(456,*)"Nx :", p%glb%node_x
 
 if(p%glb%method == 3)then
-    write(456,'(A10, 2ES15.4)')"VOF Mass:", p%glb%loss_mass_avg / p%glb%iter, p%glb%loss_mass_max
-    write(456,'(A10, 2ES15.4)')"VOF Vol:", p%glb%loss_vol_avg / p%glb%iter, p%glb%loss_vol_max
+    write(456,'(A10, 2ES15.4)')"VOF Mass:", p%glb%loss_mass_avgv / p%glb%iter, p%glb%loss_mass_maxv
+    write(456,'(A10, 2ES15.4)')"VOF Vol:", p%glb%loss_vol_avgv / p%glb%iter, p%glb%loss_vol_maxv
     write(456,'(A10, 2ES15.4)')"VOF Int:", errorv / p%glb%node_x / p%glb%node_y / p%glb%node_z
 else
     write(456,'(A10, 2ES15.4)')"LS Mass:", p%glb%loss_mass_avg / p%glb%iter, p%glb%loss_mass_max

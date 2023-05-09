@@ -1,5 +1,5 @@
 ooo Method to capture interface ( LS / MPLS / CLSVOF ) 
-2
+3
 ooo Name of the problem 
 Vortex
 ooo Dimension of threads grid in X, Y, Z direction
@@ -47,7 +47,7 @@ ooo Characteristic Length, Velocity, Time
 ooo Dimensionless parameters ( Re, Fr, We )  !!! We should not be zero
 67.27       1.0     16.0
 ooo Density / Viscosity ratio of fluid 1, 2
-0.001       0.01
+1.0       0.01
 ooo Inverse Marker function
 0
 ooo Velocity boundary condition in X direction ( no-slip / slip / non-reflective )

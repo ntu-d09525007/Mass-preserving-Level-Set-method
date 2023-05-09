@@ -1,6 +1,6 @@
 #!/bin/bash
 START=$(date +%s%N)
-sleep 1
+./RUN
 END=$(date +%s%N)
 seconds=$(echo "scale=3;($END - $START)/(1*10^09)" | bc)
 
