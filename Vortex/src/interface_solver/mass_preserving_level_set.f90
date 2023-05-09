@@ -5,7 +5,7 @@ implicit none
 integer :: i,j,k,id,iter
 real(8) :: lam, plam
 
-do iter = 1, 10
+do iter = 1, 15
     
     call surface_norms
     call ls_mv
@@ -67,7 +67,7 @@ do iter = 1, 10
     
     call pt%phi%sync
 
-    if( abs(p%glb%imass - p%glb%mass)/p%glb%imass < 1.0d-10 )exit
+    if( abs(p%glb%imass - p%glb%mass)/p%glb%imass < 1.0d-14 )exit
     
 end do  
 
