@@ -3,7 +3,7 @@ use all
 !$ use omp_lib
 implicit none
 integer :: id, i, j, k, ug, ii,jj,kk, mid
-real(8) :: x, y, z, dx, dy, theta, l
+real(8) :: x, y, z, h
 CHARACTER(100) :: NAME_OF_FILE
     
     NAME_OF_FILE="default.txt"
@@ -24,10 +24,7 @@ CHARACTER(100) :: NAME_OF_FILE
         
     call p%show
 
-    theta = 0.0d0
-    l = 0.0
-    dx = l * dcos(theta) * 0.5
-    dy = l * dsin(theta) * 0.5
+    h = 0.1876 + 0.5 + 1.5 * p%glb%ls_wid
 
     ug=30
     !$omp parallel do private(i,j,k,ii,jj,kk,x,y,z)
@@ -50,15 +47,15 @@ CHARACTER(100) :: NAME_OF_FILE
                 y = 0.5d0*( p%glb%y(i,j,k)+p%glb%y(i,j-1,k) ) + real(jj,8)*p%glb%dy/real(ug,8)
                 z = 0.5d0*( p%glb%z(i,j,k)+p%glb%z(i,j,k-1) ) + real(kk,8)*p%glb%dz/real(ug,8)
 
-                if(  x <= 1.0 .and. z<=1.0 )then
+                if(  z<= 0.1876 .or. sqrt(x**2+y**2+(z-h)**2)<=0.5 )then
                     p%of(id)%loc%vof%now(i,j,k) = p%of(id)%loc%vof%now(i,j,k) +  1.0d0/real(ug,8)**3.0d0
                 end if
 
-                if(  sqrt((x+dx)**2+(y+dy)**2+(z-1.0)**2) <= 0.5 )then
+                if(  z<= 0.1876 )then
                     p%of(id)%loc%marker(1)%vof%now(i,j,k) = p%of(id)%loc%marker(1)%vof%now(i,j,k) + 1.0d0/real(ug,8)**3.0d0
                 endif
 
-                if(  sqrt((x-dx)**2+(y-dy)**2+(z-2.5)**2) <= 0.5  )then
+                if(  sqrt(x**2+y**2+(z-h)**2)<=0.5  )then
                     p%of(id)%loc%marker(2)%vof%now(i,j,k) = p%of(id)%loc%marker(2)%vof%now(i,j,k) + 1.0d0/real(ug,8)**3.0d0
                 endif
                 
@@ -74,14 +71,17 @@ CHARACTER(100) :: NAME_OF_FILE
             p%of(id)%loc%vel%y%now(i,j,k) = 0.0d0
             p%of(id)%loc%vel%z%now(i,j,k) = 0.0d0
 
-            if(  x <= 1.0 .and. z<=1.0 ) then
-                p%of(id)%loc%phi%now(i,j,k) = 1.0d0
-            else
-                p%of(id)%loc%phi%now(i,j,k) = -1.0d0
-            endif
+            if( z <= 0.1876 )then  
+                p%of(id)%loc%phi%now(i,j,k) = -z + 0.1876
+            else if( sqrt( x**2 + y**2 + (z-h)**2 ) <= 0.5 )then
+                p%of(id)%loc%phi%now(i,j,k) = -sqrt( x**2 + y**2 + (z-h)**2) + 0.5
+                p%of(id)%loc%vel%z%now(i,j,k) = -1.0
+            else 
+                p%of(id)%loc%phi%now(i,j,k)= MAX(-z+0.1876,-sqrt( x**2 + y**2 + (z-h)**2) + 0.5)
+            end if
 
-            p%of(id)%loc%marker(1)%lsf%now(i,j,k) = - sqrt((x+dx)**2+(y+dy)**2+(z-1.0)**2) + 0.5
-            p%of(id)%loc%marker(2)%lsf%now(i,j,k) = - sqrt((x-dx)**2+(y-dy)**2+(z-2.5)**2) + 0.5
+            p%of(id)%loc%marker(1)%lsf%now(i,j,k) = - z + 0.1876
+            p%of(id)%loc%marker(2)%lsf%now(i,j,k) = -sqrt( x**2 + y**2 + (z-h)**2) + 0.5
             
         end do
         end do
@@ -110,7 +110,7 @@ CHARACTER(100) :: NAME_OF_FILE
     call pt%marker(1)%sync
     call pt%marker(2)%sync
 
-    call level_set_rk3_redis(0)
+    !call level_set_rk3_redis(0)
 
     call node_vel
     call ns_init
@@ -169,6 +169,6 @@ CHARACTER(100) :: NAME_OF_FILE
         enddo
     enddo
 
-    p%glb%merged = .true.
+    p%glb%merged = .false.
 
 end subroutine
