@@ -3,13 +3,13 @@ ooo Method to capture interface ( LS / MPLS / CLSVOF )
 ooo Name of the problem 
 MilkCrown
 ooo Dimension of threads grid in X, Y, Z direction
-3 3 3
+1 1 1
 ooo Nested OpenMP threads
 8
 ooo Domain splits for plotting (Increase if stack-overflow)
-2
+4
 ooo Multigrid level
-6
+7
 ooo Cells per unit length 
 32
 ooo Number of ghost cell
