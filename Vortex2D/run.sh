@@ -7,7 +7,7 @@ do
 	sed -i -e "50 c $r\t0.01" input/default.txt
 	for dx in 32 64 128 256
 	do
-		sed -i -e "4 c Vortex_$r_$dx" input/default.txt
+		sed -i -e "4 c Vortex_{$r}_$dx" input/default.txt
 		sed -i -e "14 c $dx" input/default.txt
 		START=$(date +%s%N)
 		./RUN
