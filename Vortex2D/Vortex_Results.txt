@@ -1,0 +1,12 @@
+ Method: LS
+ Density Ratio:   1.00000000000000     
+ Nx :          64
+  LS Mass:     2.3084E-02     5.8362E-02
+   LS Vol:     2.3084E-02     5.8360E-02
+   LS Int:     1.4473E-02
+ Method: CLSVOF
+ Density Ratio:   1.00000000000000     
+ Nx :          64
+ VOF Mass:     1.4354E-11     9.7723E-11
+  VOF Vol:     1.4484E-11     9.8029E-11
+  VOF Int:     1.6626E-02
