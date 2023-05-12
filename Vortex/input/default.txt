@@ -5,11 +5,11 @@ Vortex
 ooo Dimension of threads grid in X, Y, Z direction
 1 1 1
 ooo Nested OpenMP threads
-4
+16
 ooo Domain splits for plotting (Increase if stack-overflow)
 2
 ooo Multigrid level
-6
+-1
 ooo Cells per unit length 
 64
 ooo Number of ghost cell
@@ -23,7 +23,7 @@ ooo Range of domain in Z direction
 ooo Time to stop / plot / redistance
 3.0        0.5        -1
 ooo Crount number ( advection / redistance )
-0.1        0.1
+0.5        0.1
 ooo PPE iteration ( tolerance / w1 / w2 / valve )
 10.0    0.5     0.5     4.0
 ooo SRK6 iteration ( tolerance / w )
