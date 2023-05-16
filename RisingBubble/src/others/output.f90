@@ -119,7 +119,7 @@ implicit none
         write(*,'("VOF, Loss of volume(%) :",ES15.4)')100.0d0*(p%glb%volv-p%glb%ivolv)/p%glb%ivolv
         if( .not. p%glb%merged )then
             write(*,'("VOF<1>, Loss of volume(%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(1)%volv-p%of(0)%loc%marker(1)%ivolv)/p%of(0)%loc%marker(1)%ivolv
-            write(*,'("VOF<2>, Loss of volume(%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(1)%volv-p%of(0)%loc%marker(1)%ivolv)/p%of(0)%loc%marker(1)%ivolv
+            write(*,'("VOF<2>, Loss of volume(%) :",ES15.4)')100.0d0*(p%of(0)%loc%marker(2)%volv-p%of(0)%loc%marker(2)%ivolv)/p%of(0)%loc%marker(2)%ivolv
         endif
         write(*,*)''
     endif

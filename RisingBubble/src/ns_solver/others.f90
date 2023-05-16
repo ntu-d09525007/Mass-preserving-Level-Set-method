@@ -88,14 +88,14 @@ integer :: i, j, k, id, mid
 real(8) :: mass, vol, massv, volv, dv, rho, marker, x, pi
 
 if( p%glb%merged )then
-
-    do id = 0, p%glb%threads-1
-        p%of(id)%loc%marker(mid)%mass = -1.0
-        p%of(id)%loc%marker(mid)%vol = -1.0
-        p%of(id)%loc%marker(mid)%massv = -1.0
-        p%of(id)%loc%marker(mid)%volv = -1.0
+    do mid = 1, 2
+        do id = 0, p%glb%threads-1
+            p%of(id)%loc%marker(mid)%mass = -1.0
+            p%of(id)%loc%marker(mid)%vol = -1.0
+            p%of(id)%loc%marker(mid)%massv = -1.0
+            p%of(id)%loc%marker(mid)%volv = -1.0
+        enddo
     enddo
-
 else
 
     dv = p%glb%dx * p%glb%dy * p%glb%dz

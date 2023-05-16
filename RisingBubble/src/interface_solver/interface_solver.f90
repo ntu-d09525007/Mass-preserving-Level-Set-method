@@ -153,6 +153,9 @@ if( .not. p%glb%merged )then
             do i = p%of(id)%loc%is-p%glb%ghc, p%of(id)%loc%ie+p%glb%ghc
                 p%of(id)%loc%phi%now(i,j,k) = p%of(id)%loc%marker(mid)%lsf%now(i,j,k)
                 p%of(id)%loc%vof%now(i,j,k) = p%of(id)%loc%marker(mid)%vof%now(i,j,k)
+
+                p%of(id)%loc%marker(mid)%vof%tmp(i,j,k) = p%of(id)%loc%vof%old(i,j,k)
+                p%of(id)%loc%vof%old(i,j,k) = p%of(id)%loc%marker(mid)%vof%old(i,j,k)
             enddo
             enddo
             enddo
@@ -178,6 +181,8 @@ if( .not. p%glb%merged )then
             do i = p%of(id)%loc%is-p%glb%ghc, p%of(id)%loc%ie+p%glb%ghc
                 p%of(id)%loc%marker(mid)%lsf%now(i,j,k) = p%of(id)%loc%phi%now(i,j,k)
                 p%of(id)%loc%marker(mid)%vof%now(i,j,k) = p%of(id)%loc%vof%now(i,j,k)
+
+                p%of(id)%loc%vof%old(i,j,k) = p%of(id)%loc%marker(mid)%vof%tmp(i,j,k)
             enddo
             enddo
             enddo
@@ -195,24 +200,21 @@ if( .not. p%glb%merged )then
         do k = p%of(id)%loc%ks-p%glb%ghc, p%of(id)%loc%ke+p%glb%ghc
         do j = p%of(id)%loc%js-p%glb%ghc, p%of(id)%loc%je+p%glb%ghc
         do i = p%of(id)%loc%is-p%glb%ghc, p%of(id)%loc%ie+p%glb%ghc
-            tmp1 = p%of(id)%loc%marker(1)%lsf%now(i,j,k)
-            tmp2 = p%of(id)%loc%marker(2)%lsf%now(i,j,k)
+            tmp1 = p%of(id)%loc%marker(1)%lsf%now(i,j,k) + p%glb%ls_wid
+            tmp2 = p%of(id)%loc%marker(2)%lsf%now(i,j,k) + p%glb%ls_wid
             reconstruct = reconstruct .or. (tmp1 * tmp2 > 0.0d0 .and. tmp1 + tmp2 > 0.0)
             if( tmp1 * tmp2 > 0.0 )then
                 if( tmp1 + tmp2 > 0.0 )then
-                    p%of(id)%loc%phi%now(i,j,k) = min(tmp1, tmp2)
+                    p%of(id)%loc%phi%now(i,j,k) = min(tmp1, tmp2) - p%glb%ls_wid
                 else
-                    p%of(id)%loc%phi%now(i,j,k) = max(tmp1, tmp2)
+                    p%of(id)%loc%phi%now(i,j,k) = max(tmp1, tmp2) - p%glb%ls_wid
                 endif
             else
-                p%of(id)%loc%phi%now(i,j,k) = max(tmp1, tmp2)
+                p%of(id)%loc%phi%now(i,j,k) = max(tmp1, tmp2) - p%glb%ls_wid
             endif
 
-            tmp1 = p%of(id)%loc%marker(1)%vof%now(i,j,k)
-            tmp2 = p%of(id)%loc%marker(2)%vof%now(i,j,k)
-            reconstruct = reconstruct .or. (tmp1 * tmp2 > 0.0 )
-
-            p%of(id)%loc%vof%now(i,j,k) = max(tmp1 + tmp2, 1.0d0)
+            p%of(id)%loc%vof%now(i,j,k) = min(p%of(id)%loc%marker(1)%vof%now(i,j,k) + p%of(id)%loc%marker(2)%vof%now(i,j,k),&
+                                            & 1.0d0)
 
         enddo
         enddo

@@ -50,16 +50,14 @@ CHARACTER(100) :: NAME_OF_FILE
                 y = 0.5d0*( p%glb%y(i,j,k)+p%glb%y(i,j-1,k) ) + real(jj,8)*p%glb%dy/real(ug,8)
                 z = 0.5d0*( p%glb%z(i,j,k)+p%glb%z(i,j,k-1) ) + real(kk,8)*p%glb%dz/real(ug,8)
 
-                if(  sqrt((x+dx)**2+(y+dy)**2+(z-1.0)**2) <= 0.5 .or. sqrt((x-dx)**2+(y-dy)**2+(z-2.5)**2) <= 0.5 )then
-                    p%of(id)%loc%vof%now(i,j,k) = p%of(id)%loc%vof%now(i,j,k) +  1.0d0/real(ug,8)**3.0d0
-                end if
-
                 if(  sqrt((x+dx)**2+(y+dy)**2+(z-1.0)**2) <= 0.5 )then
                     p%of(id)%loc%marker(1)%vof%now(i,j,k) = p%of(id)%loc%marker(1)%vof%now(i,j,k) + 1.0d0/real(ug,8)**3.0d0
+                    p%of(id)%loc%vof%now(i,j,k) = p%of(id)%loc%vof%now(i,j,k) +  1.0d0/real(ug,8)**3.0d0
                 endif
 
                 if(  sqrt((x-dx)**2+(y-dy)**2+(z-2.5)**2) <= 0.5  )then
                     p%of(id)%loc%marker(2)%vof%now(i,j,k) = p%of(id)%loc%marker(2)%vof%now(i,j,k) + 1.0d0/real(ug,8)**3.0d0
+                    p%of(id)%loc%vof%now(i,j,k) = p%of(id)%loc%vof%now(i,j,k) +  1.0d0/real(ug,8)**3.0d0
                 endif
                 
             end do

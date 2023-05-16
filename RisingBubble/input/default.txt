@@ -1,5 +1,5 @@
 ooo Method to capture interface ( LS / MPLS / CLSVOF ) 
-2
+3
 ooo Name of the problem 
 BubbleRising_16
 ooo Dimension of threads grid in X, Y, Z direction
@@ -23,7 +23,7 @@ ooo Range of domain in Z direction
 ooo Time to stop / plot / redistance
 10.0        0.1        10
 ooo Crount number ( advection / redistance )
-0.002       0.1
+0.01       0.1
 ooo PPE iteration ( tolerance / w1 / w2 / valve )
 10.0    0.5     0.5     4.0
 ooo SRK6 iteration ( tolerance / w )
