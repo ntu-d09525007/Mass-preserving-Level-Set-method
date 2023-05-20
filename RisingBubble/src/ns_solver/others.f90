@@ -90,10 +90,10 @@ real(8) :: mass, vol, massv, volv, dv, rho, marker, x, pi
 if( p%glb%merged )then
     do mid = 1, 2
         do id = 0, p%glb%threads-1
-            p%of(id)%loc%marker(mid)%mass = -1.0
-            p%of(id)%loc%marker(mid)%vol = -1.0
-            p%of(id)%loc%marker(mid)%massv = -1.0
-            p%of(id)%loc%marker(mid)%volv = -1.0
+            p%of(id)%loc%marker(mid)%mass = 0.0
+            p%of(id)%loc%marker(mid)%vol = 0.0
+            p%of(id)%loc%marker(mid)%massv = 0.0
+            p%of(id)%loc%marker(mid)%volv = 0.0
         enddo
     enddo
 else
