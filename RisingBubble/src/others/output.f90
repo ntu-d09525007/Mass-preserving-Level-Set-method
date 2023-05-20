@@ -11,12 +11,26 @@ if( p%glb%iter == 1)then
 endif
 
 ! level set method, loss of volume/mass in percentage
+
+if( p%glb%method .ne. 3)then
+
 write(p%fil%mass,'(7ES15.4)')p%glb%time,100.0d0*(p%glb%imass-p%glb%mass)/p%glb%imass,100.0d0*(p%glb%imassv-p%glb%massv)/p%glb%imassv, &
     & 100.0d0*(p%of(0)%loc%marker(1)%imass-p%of(0)%loc%marker(1)%mass)/p%of(0)%loc%marker(1)%imass, &
     & 100.0d0*(p%of(0)%loc%marker(2)%imass-p%of(0)%loc%marker(2)%mass)/p%of(0)%loc%marker(2)%imass
 write(p%fil%vol,'(7ES15.4)')p%glb%time,100.0d0*(p%glb%ivol-p%glb%vol)/p%glb%ivol,100.0d0*(p%glb%ivolv-p%glb%volv)/p%glb%ivolv, &
     & 100.0d0*(p%of(0)%loc%marker(1)%ivol-p%of(0)%loc%marker(1)%vol)/p%of(0)%loc%marker(1)%ivol, &
     & 100.0d0*(p%of(0)%loc%marker(2)%ivol-p%of(0)%loc%marker(2)%vol)/p%of(0)%loc%marker(2)%ivol
+
+else
+
+write(p%fil%mass,'(7ES15.4)')p%glb%time,100.0d0*(p%glb%imass-p%glb%mass)/p%glb%imass,100.0d0*(p%glb%imassv-p%glb%massv)/p%glb%imassv, &
+    & 100.0d0*(p%of(0)%loc%marker(1)%imassv-p%of(0)%loc%marker(1)%massv)/p%of(0)%loc%marker(1)%imassv, &
+    & 100.0d0*(p%of(0)%loc%marker(2)%imassv-p%of(0)%loc%marker(2)%massv)/p%of(0)%loc%marker(2)%imassv
+write(p%fil%vol,'(7ES15.4)')p%glb%time,100.0d0*(p%glb%ivol-p%glb%vol)/p%glb%ivol,100.0d0*(p%glb%ivolv-p%glb%volv)/p%glb%ivolv, &
+    & 100.0d0*(p%of(0)%loc%marker(1)%ivolv-p%of(0)%loc%marker(1)%volv)/p%of(0)%loc%marker(1)%ivolv, &
+    & 100.0d0*(p%of(0)%loc%marker(2)%ivolv-p%of(0)%loc%marker(2)%volv)/p%of(0)%loc%marker(2)%ivolv
+
+endif
 
 p%glb%loss_mass_avg = p%glb%loss_mass_avg + abs(p%glb%imass-p%glb%mass)/p%glb%imass
 p%glb%loss_vol_avg = p%glb%loss_vol_avg + abs(p%glb%ivol-p%glb%vol)/p%glb%ivol
