@@ -1,7 +1,7 @@
 ooo Method to capture interface ( LS / MPLS / CLSVOF ) 
-2
+1
 ooo Name of the problem 
-Vortex_MPLS_128
+Vortex_LS_64
 ooo Dimension of threads grid in X, Y, Z direction
 1 1 1
 ooo Nested OpenMP threads
@@ -11,7 +11,7 @@ ooo Domain splits for plotting (Increase if stack-overflow)
 ooo Multigrid level
 -1
 ooo Cells per unit length 
-128
+64
 ooo Number of ghost cell
 3
 ooo Range of domain in X direction
