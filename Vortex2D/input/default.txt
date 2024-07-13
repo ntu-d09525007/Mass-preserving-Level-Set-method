@@ -1,7 +1,7 @@
 ooo Method to capture interface ( LS / MPLS / CLSVOF ) 
-1
+2
 ooo Name of the problem 
-Vortex_LS_64
+Vortex_MPLS_128
 ooo Dimension of threads grid in X, Y, Z direction
 1 1 1
 ooo Nested OpenMP threads
@@ -11,7 +11,7 @@ ooo Domain splits for plotting (Increase if stack-overflow)
 ooo Multigrid level
 -1
 ooo Cells per unit length 
-64
+128
 ooo Number of ghost cell
 3
 ooo Range of domain in X direction
@@ -21,9 +21,9 @@ ooo Range of domain in Y direction
 ooo Range of domain in Z direction
 0.0        1.0
 ooo Time to stop / plot / redistance
-2.0        0.5        -1
+4.0        0.5        -1
 ooo Crount number ( advection / redistance )
-0.5        0.1
+0.01       0.1
 ooo PPE iteration ( tolerance / w1 / w2 / valve )
 10.0    0.5     0.5     4.0
 ooo SRK6 iteration ( tolerance / w )
